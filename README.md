@@ -17,6 +17,12 @@ You can run your application in dev mode that enables live coding using:
 실습 5 : 내비게이션 바에서 href = / target = "_blank" 에 주소를 입력시켜 바에서 웹사이트를 눌렀을때 다른 주소로 연결이 되게끔 실습 6 : 아트록스 카드에 상세 보기를 넣고 상세 보기를 누르면 다른 창이 열리는 것(모달)을 생성
 
 
+# 4주차 과제 테스트
+1.로고추가, 로고 이름 변경
+2.navBar에서 글자들을 가운데 정렬
+3.새로운 멜이라는 캐릭터 추가 후 아트록스와 같이 사진변경,상세설명 추가,모달 추가 후 배경 변경 하였다.
 
 
-테스트
+![alt text](4주차과제2.jpg) !
+![alt text](<4주차 과제.jpg>) !
+![alt text](<4주차 과제1.jpg>) !
