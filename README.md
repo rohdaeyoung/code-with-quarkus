@@ -16,6 +16,9 @@ You can run your application in dev mode that enables live coding using:
 실습 4 : navBar(내비게이션 바)를 Bootstrap에서 코드를 갖고와서 index에서 바를 바꾼 후 바 안에 글씨를 수정하였다.
 실습 5 : 내비게이션 바에서 href = / target = "_blank" 에 주소를 입력시켜 바에서 웹사이트를 눌렀을때 다른 주소로 연결이 되게끔 실습 6 : 아트록스 카드에 상세 보기를 넣고 상세 보기를 누르면 다른 창이 열리는 것(모달)을 생성
 
+<img width="1076" height="442" alt="image" src="https://github.com/user-attachments/assets/3f7acb46-4e93-48fc-9b3f-724eb2d90687" />
+<img width="1257" height="40" alt="image" src="https://github.com/user-attachments/assets/a901010c-5720-4404-9437-19e380b2fc75" />
+<img width="857" height="551" alt="image" src="https://github.com/user-attachments/assets/d37332ef-3dae-40c3-b734-9e0f3ed00971" />
 
 
-테스트
+
