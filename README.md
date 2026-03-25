@@ -17,7 +17,6 @@ You can run your application in dev mode that enables live coding using:
 실습 5 : 내비게이션 바에서 href = / target = "_blank" 에 주소를 입력시켜 바에서 웹사이트를 눌렀을때 다른 주소로 연결이 되게끔 실습 6 : 아트록스 카드에 상세 보기를 넣고 상세 보기를 누르면 다른 창이 열리는 것(모달)을 생성
 
 
-![alt text](image.png)
-![alt text](image-1.png)
+
 
 테스트
