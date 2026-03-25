@@ -15,6 +15,7 @@ You can run your application in dev mode that enables live coding using:
 실습 3 : 교수님이 주신 리소스 파일 코드를 index.html파일에 붙여 넣고 아트록스 사진을 변경
 실습 4 : navBar(내비게이션 바)를 Bootstrap에서 코드를 갖고와서 index에서 바를 바꾼 후 바 안에 글씨를 수정하였다.
 실습 5 : 내비게이션 바에서 href = / target = "_blank" 에 주소를 입력시켜 바에서 웹사이트를 눌렀을때 다른 주소로 연결이 되게끔 실습 6 : 아트록스 카드에 상세 보기를 넣고 상세 보기를 누르면 다른 창이 열리는 것(모달)을 생성
+<<<<<<< HEAD
 
 
 # 4주차 과제 테스트
@@ -26,3 +27,7 @@ You can run your application in dev mode that enables live coding using:
 ![alt text](4주차과제2.jpg) !
 ![alt text](<4주차 과제.jpg>) !
 ![alt text](<4주차 과제1.jpg>) !
+=======
+<img width="857" height="551" alt="image" src="https://github.com/user-attachments/assets/f88d85df-7688-41b6-8929-ff984ab201ae" />
+<img width="1091" height="297" alt="image" src="https://github.com/user-attachments/assets/f1a8abc4-7b89-4e21-8e92-fb9079093bd1" />
+>>>>>>> 959fa3661d865ba625218f45d6ddf60d744776df
