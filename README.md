@@ -31,3 +31,13 @@ You can run your application in dev mode that enables live coding using:
 <img width="857" height="551" alt="image" src="https://github.com/user-attachments/assets/f88d85df-7688-41b6-8929-ff984ab201ae" />
 <img width="1091" height="297" alt="image" src="https://github.com/user-attachments/assets/f1a8abc4-7b89-4e21-8e92-fb9079093bd1" />
 >>>>>>> 959fa3661d865ba625218f45d6ddf60d744776df
+
+
+
+
+#5주차 내용
+1.내비게이션 바에서 다운로드선택시 다운로드 창을 만듦(main_page폴더,)
+2.다운로드 페이지에서 맥,윈도우 탭이 나뉘어져있고 다운로드창에 사진을 입혔다.
+3.다운로드창에 사양표를 넣음
+![alt text](image-2.png)
+![alt text](image-3.png)
