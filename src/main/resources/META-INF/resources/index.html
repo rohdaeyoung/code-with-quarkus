@@ -6,7 +6,17 @@
     <title>League of Legends - 메인 페이지</title>
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>  <!--(두가지 정도 사용해야 부트스트랩5가 돌아감.)-->  
+    
+
+  <!-- (자바 스크립트에서 실행되면 해킹의 위험성이 큼) -->
+    <script>      
+        window.onload = function() {  //페이지에 누르면 바로 실행됨.
+            alert("메인 페이지 로딩 완료"); 
+        }
+    </script>
+
+
     <!-- 커스텀 스타일 (LOL 테마 + 챔피언 호버 효과) -->
     <style>
         body { background-color: #0a0e17; color: #fff; font-family: 'Arial', sans-serif; }
@@ -83,20 +93,20 @@
         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
       </li>
     </ul>
-    <form class="d-flex" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-      <button class="btn btn-outline-success" type="submit">Search</button>
+    <form class="d-flex" id="searchForm">
+        <input class="form-control me-2" type="search" placeholder="챔피언, 뉴스 검색..." aria-label="Search" id="searchInput">
+        <button class="btn btn-outline-success" type="submit">검색하기</button>
     </form>
-  </div>
-</div>
-</nav>
+    </div>
+    </div>
+    </nav>
 
     <!-- 히어로 배너 (Hero Banner) -->
     <section class="hero d-flex align-items-center justify-content-center text-center py-5">
         <div class="container">
             <h1 class="display-3 fw-bold">League of Legends</h1>
             <p class="lead">적의 넥서스를 파괴하세요! 5v5 MOBA 전투에서 팀과 함께 승리하세요.</p>
-            <a href="#" class="btn btn-primary btn-lg">무료 플레이</a>
+            <a href="#" class="btn btn-primary btn-lg" onclick="alert('즐거운 플레이 되세요')">무료 플레이</a>  
         </div>
     </section>
 
@@ -280,6 +290,7 @@ allowfullscreen>
             </div>
         </div>
     </section>
+     <script src="js/search.js"></script>
     
 </body>
 </html>

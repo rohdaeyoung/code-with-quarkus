@@ -15,7 +15,6 @@ You can run your application in dev mode that enables live coding using:
 실습 3 : 교수님이 주신 리소스 파일 코드를 index.html파일에 붙여 넣고 아트록스 사진을 변경
 실습 4 : navBar(내비게이션 바)를 Bootstrap에서 코드를 갖고와서 index에서 바를 바꾼 후 바 안에 글씨를 수정하였다.
 실습 5 : 내비게이션 바에서 href = / target = "_blank" 에 주소를 입력시켜 바에서 웹사이트를 눌렀을때 다른 주소로 연결이 되게끔 실습 6 : 아트록스 카드에 상세 보기를 넣고 상세 보기를 누르면 다른 창이 열리는 것(모달)을 생성
-<<<<<<< HEAD
 
 
 # 4주차 과제 테스트
@@ -27,10 +26,8 @@ You can run your application in dev mode that enables live coding using:
 ![alt text](4주차과제2.jpg) !
 ![alt text](<4주차 과제.jpg>) !
 ![alt text](<4주차 과제1.jpg>) !
-=======
 <img width="857" height="551" alt="image" src="https://github.com/user-attachments/assets/f88d85df-7688-41b6-8929-ff984ab201ae" />
 <img width="1091" height="297" alt="image" src="https://github.com/user-attachments/assets/f1a8abc4-7b89-4e21-8e92-fb9079093bd1" />
->>>>>>> 959fa3661d865ba625218f45d6ddf60d744776df
 
 
 
@@ -41,3 +38,23 @@ You can run your application in dev mode that enables live coding using:
 3.다운로드창에 사양표를 넣음
 ![alt text](image-2.png)
 ![alt text](image-3.png)
+
+
+#6주차 내용
+1. <!-- (자바 스크립트에서 실행되면 해킹의 위험성이 큼) -->
+    <script>      
+        window.onload = function() {  //페이지에 누르면 바로 실행됨.
+            alert("메인 페이지 로딩 완료"); 
+        }
+    </script>
+2. onclick = 누르면 실행됨.
+3. 인라인 함수: 가장 보안에 취약한 방식, 웹사이트에서 차단가능
+
+4. .trim() 앞뒤 공백 제거
+7. class = 디자인
+6. id:보유 식별자(해당 폼  페이지의 고유값)
+9. blank: 새창 띄우기(repit)
+10. document.getElementById(): 자바 스트립트 처리할떄 많이 사용됨.
+11. var: 어디든지 사용가능, let: 재할당 받음, const: 상수 할당 받음.
+-전체내용 요약: 창 안에서 검색창 폼에서 search 파일을 만들어 검색이 되어 연결 링크까지 가도록했다.
+-검색창에 검색하는 연결 스크립트는 <script src="js/test.js"></script> 마지막에 들어감.
