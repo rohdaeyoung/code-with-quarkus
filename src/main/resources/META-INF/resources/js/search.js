@@ -9,11 +9,14 @@
 // ── 챔피언 데이터 ──────────────────────────────────────────────
 const CHAMPIONS = [
     { name: '아트록스', engName: 'Aatrox', role: '전사', lane: '탑', img: 'image/Atrox.jpg', difficulty: '상' },
-    { name: '사일러스', engName: 'Sylas', role: '마법사', lane: '정글/미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Sylas.png', difficulty: '중' },
+    { name: '멜', engName: 'Mell', role: '마법사', lane: '미드', img: 'image2/Mell.jpg', difficulty: '중' },
     { name: '애니비아', engName: 'Anivia', role: '마법사', lane: '미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Anivia.png', difficulty: '상' },
     { name: '브라이어', engName: 'Briar', role: '전사', lane: '정글', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Briar.png', difficulty: '중' },
     { name: '잭스', engName: 'Jax', role: '전사', lane: '탑', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jax.png', difficulty: '하' },
     { name: '징크스', engName: 'Jinx', role: '원거리딜러', lane: '원딜', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jinx.png', difficulty: '중' },
+    { name: '잔나렘', engName: 'Janahrem', role: '탱커', lane: '서포트', img: 'image4/잔나렘.jpg', difficulty: '중' },
+    { name: '흐웨이', engName: 'Hwei', role: '탱커', lane: '서포트', img: 'image5/흐웨이.jpg', difficulty: '중' },
+    
 ]
 
 // ── 뉴스 데이터 ──────────────────────────────────────────────

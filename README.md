@@ -65,3 +65,13 @@ You can run your application in dev mode that enables live coding using:
 2. main.css파일을 css폴더에 넣은 후 index 파일에서 연결링크를 넣은 후 main.css 파일에서 아트록스를 관리 할 수 있게 해줌.
 3. 검색에서 없는 검색어는 그 검색어에 맞춰 그 검색어 출력 후 각 뉴스,캐릭터에 없다는 글을 뜨도록 설정을 하고 이벤트를 넣어 챔피언이 있는지 없는지 관리 할 수 있도록 하였다.
 ![alt text](image-4.png)
+
+# 7주차 과제
+-modal창 구현
+![alt text](image-8.png)
+![alt text](image-9.png)
+
+-새로 추가했던 캐릭터를 검색 후 상세 정보가 나오게 함. 
+![alt text](image-5.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
