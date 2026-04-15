@@ -75,3 +75,5 @@ You can run your application in dev mode that enables live coding using:
 ![alt text](image-5.png)
 ![alt text](image-6.png)
 ![alt text](image-7.png)
+
+<video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
