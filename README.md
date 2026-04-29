@@ -77,3 +77,8 @@ You can run your application in dev mode that enables live coding using:
 ![alt text](image-7.png)
 
 <video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
+
+# 8주차 수업내용
+1. 네이게이션바에서 토글을 연결해 글자를 선택하면 다크,화이트 모드로 변경 되도록 설정
+2. DB의 연결과 현재 내가 만든 코드들의 파일 상태 확인가능
+3. mysql은 데이터를 주고 받기 위해서 3306으로 설정
