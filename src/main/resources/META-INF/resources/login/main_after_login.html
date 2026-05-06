@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League of Legends - 메인 페이지</title>
     <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="js/bootstrap.bundle.min.js"></script>  <!--(두가지 정도 사용해야 부트스트랩5가 돌아감.)-->  
-    <script src="js/test2.js"></script>
+    <link href="../https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>  <!--(두가지 정도 사용해야 부트스트랩5가 돌아감.)-->  
+    <script src="../js/test2.js"></script>
     
     
 
@@ -72,7 +72,7 @@ body.light-mode .card-text { color: #555; }
         <nav class="navbar bg-body-tertiary">
 <div class="container">
   <a class="img" href="#">
-    <img src="image1/logo.jpeg" alt="Bootstrap" width="30" height="24">
+    <img src="../image1/logo.jpeg" alt="Bootstrap" width="30" height="24">
   </a>
 </div>
 </nav>
@@ -98,8 +98,10 @@ body.light-mode .card-text { color: #555; }
       <li class="nav-item">
         <a class="nav-link" href="main_page_sub/download.html">다운로드</a>
       </li>
+      <!-- 기존 로그인 버튼 제거, 로그아웃 버튼 추가-->
       <li class="nav-item">
-        <a class="nav-link" href="/login">로그인</a>
+        <a class="nav-link btn btn-outline-danger btn-sm px-3"
+        href="/logout">로그아웃</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -454,8 +456,8 @@ body.light-mode .card-text { color: #555; }
 </div>
 
 
-     <script src="js/search.js"></script>
-     <script src="js/toggle.js"></script>
+     <script src="../js/search.js"></script>
+     <script src="../js/toggle.js"></script>
     
 </body>
 </html>

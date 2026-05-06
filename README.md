@@ -78,7 +78,15 @@ You can run your application in dev mode that enables live coding using:
 
 <video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
 
-# 8주차 수업내용
+# 9주차 수업내용
 1. 네이게이션바에서 토글을 연결해 글자를 선택하면 다크,화이트 모드로 변경 되도록 설정
 2. DB의 연결과 현재 내가 만든 코드들의 파일 상태 확인가능
 3. mysql은 데이터를 주고 받기 위해서 3306으로 설정
+
+# 10주차
+1. 웹 보안: 쿠키(웹브라우저에 저장) ex:장바구니
+2. 개인정보는 백엔드 자체 DB에 저장이 된 후 꺼내올 수 있도록 해야함.(다운로드 서버 창과 다름)
+3. 로그인 창만든 후 로그인 창을 만들고 네비게이션바를 그대로 갖고 와서 로그인 파일에 넣는다.
+4. AuthResource.java파일에 login.html 파일에서 값을 받으면 파라미터가 되도록 값을 다시 받는 코드를 넣는다.
+5. extend= panacheEntity라이브러니에서 만들어진 함수를 갖다 쓸 수 있다.
+6. SessionConfig를 만들어야지 실시간으로 사람이 쓰고 있는지 검사하는 것.
