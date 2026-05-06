@@ -1,4 +1,4 @@
-package org.acme;
+package org.acme.Champion;
 
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -13,15 +13,13 @@ public class ChampionResource {
     // 전체목록조회
 
     @GET
-
     public List<Champion> list() {
-
         return Champion.listAll();
 }
 
-@POST
-@Transactional
-public void add(Champion champion) {
-champion.persist();
-}
+    @POST
+    @Transactional
+    public void add(Champion champion) {
+        champion.persist();
+    }
 }
