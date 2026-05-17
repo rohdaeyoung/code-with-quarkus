@@ -83,6 +83,11 @@ You can run your application in dev mode that enables live coding using:
 2. DB의 연결과 현재 내가 만든 코드들의 파일 상태 확인가능
 3. mysql은 데이터를 주고 받기 위해서 3306으로 설정
 
+# 9주차 과제
+사진과 같이 검색 하였을 때 캐릭터가 나오고 상세버튼을 눌렀을 때 모달창이 뜨게끔 하였다.
+![alt text](image-10.png)
+![alt text](image-11.png)
+![alt text](image-12.png)
 # 10주차
 1. 웹 보안: 쿠키(웹브라우저에 저장) ex:장바구니
 2. 개인정보는 백엔드 자체 DB에 저장이 된 후 꺼내올 수 있도록 해야함.(다운로드 서버 창과 다름)

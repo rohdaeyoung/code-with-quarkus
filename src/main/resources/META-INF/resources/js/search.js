@@ -98,16 +98,16 @@
 
 
 
-// ── 데이터 영역 (챔피언 및 뉴스) ──────────────────────────────────────────────
+// ── 데이터 영역 ──────────────────────────────────────────────
 const CHAMPIONS = [
-    { name: '아트록스', engName: 'Aatrox', role: '전사', lane: '탑', img: 'image/Atrox.jpg', difficulty: '상' },
-    { name: '멜', engName: 'Mell', role: '마법사', lane: '미드', img: 'image2/Mell.jpg', difficulty: '중' },
-    { name: '애니비아', engName: 'Anivia', role: '마법사', lane: '미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Anivia.png', difficulty: '상' },
-    { name: '브라이어', engName: 'Briar', role: '전사', lane: '정글', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Briar.png', difficulty: '중' },
-    { name: '잭스', engName: 'Jax', role: '전사', lane: '탑', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jax.png', difficulty: '하' },
-    { name: '징크스', engName: 'Jinx', role: '원거리딜러', lane: '원딜', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jinx.png', difficulty: '중' },
-    { name: '잔나렘', engName: 'Janahrem', role: '탱커', lane: '서포트', img: 'image4/잔나렘.jpg', difficulty: '중' },
-    { name: '흐웨이', engName: 'Hwei', role: '탱커', lane: '서포트', img: 'image5/흐웨이.jpg', difficulty: '중' },
+    { name: '애니비아', engName: 'Anivia', role: '마법사', lane: '미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Anivia.png', difficulty: '상', modal: 'modals/Anivia.html' },
+    { name: '브라이어', engName: 'Briar', role: '전사', lane: '정글', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Briar.png', difficulty: '중', modal: 'modals/Briar.html' },
+    { name: '잭스', engName: 'Jax', role: '전사', lane: '탑', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jax.png', difficulty: '하', modal: 'modals/Jax.html' },
+    { name: '징크스', engName: 'Jinx', role: '원거리딜러', lane: '원딜', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Jinx.png', difficulty: '중', modal: 'modals/Jinx.html' },
+    { name: '아트록스', engName: 'Aatrox', role: '전사', lane: '탑', img: 'image/Atrox.jpg', difficulty: '상', modal: 'modals/Aatrox.html' },
+    { name: '멜', engName: 'Mell', role: '마법사', lane: '미드', img: 'image2/Mell.jpg', difficulty: '중', modal: 'modals/Mell.html' },
+    { name: '흐웨이', engName: 'Hwei', role: '탱커', lane: '서포트', img: 'image5/흐웨이.jpg', difficulty: '중', modal: 'modals/Hwei.html' },
+    { name: '잔나렘', engName: 'Janahrem', role: '탱커', lane: '서포트', img: 'image4/잔나렘.jpg', difficulty: '중', modal: 'modals/Janahrem.html' }
 ];
 
 const NEWS = [
@@ -115,98 +115,87 @@ const NEWS = [
     { title: '패치 노트 16.4', desc: '챔피언 밸런스 및 아이템 업데이트 내용을 확인하세요.', category: '패치 노트' },
 ];
 
-// ── 1. 메인 화면으로 복구하는 함수 ──────────────────────────────────────────
+// ── 1. 메인 화면으로 복구 ──────────────────────────────────────────
 function showMainScreen() {
-    // 검색 결과 섹션 숨기기
     const searchResults = document.getElementById('searchResults');
     if (searchResults) {
         searchResults.style.display = 'none';
         searchResults.classList.add('d-none');
     }
-
-    // 기존 메인 섹션들(Hero, Champions 리스트 등) 다시 보이기
     const mainSections = document.querySelectorAll('section:not(#searchResults)');
     mainSections.forEach(section => {
-        section.style.display = 'block';
         section.classList.remove('d-none');
+        section.style.display = 'block';
     });
-
-    // 입력창 비우기
     document.getElementById('searchInput').value = '';
 }
 
-// ── 2. 검색 실행 함수 (통합 버전) ──────────────────────────────────────────
+// ── 2. 검색 실행 (안전한 필터링 버전) ──────────────────────────────────
 function performSearch(query) {
-    // query 인자가 직접 들어오지 않은 경우(이벤트로 호출된 경우) 처리
     const inputVal = typeof query === 'string' ? query : document.getElementById('searchInput').value;
     const q = inputVal.trim().toLowerCase();
 
-    // [조건] 검색어가 없거나 공백인 경우 메인화면으로 복귀
     if (!q) {
         showMainScreen();
         return;
     }
 
-    // 검색어가 있을 때 UI 제어: 메인 섹션 숨기고 결과창 띄우기
+    // UI 제어
     document.querySelectorAll('section:not(#searchResults)').forEach(s => s.classList.add('d-none'));
     const searchResults = document.getElementById('searchResults');
     searchResults.classList.remove('d-none');
     searchResults.style.display = 'block';
-
-    // 키워드 표시
     document.getElementById('searchKeywordDisplay').textContent = `"${inputVal}" 검색 결과`;
 
-    // 데이터 필터링 (챔피언)
-    const champResults = CHAMPIONS.filter(c =>
-        c.name.includes(q) || c.engName.toLowerCase().includes(q) ||
-        c.role.includes(q) || c.lane.includes(q)
-    );
+    // 챔피언 필터링 (데이터가 비어있어도 에러 안 나게 처리)
+    const champResults = CHAMPIONS.filter(c => {
+        const name = c.name || "";
+        const eng = c.engName || "";
+        const role = c.role || "";
+        const lane = c.lane || "";
+        return name.includes(q) || eng.toLowerCase().includes(q) || role.includes(q) || lane.includes(q);
+    });
 
-    // 데이터 필터링 (뉴스)
     const newsResults = NEWS.filter(n =>
         n.title.toLowerCase().includes(q) || n.desc.toLowerCase().includes(q) || n.category.toLowerCase().includes(q)
     );
 
-    // 카운트 업데이트
     document.getElementById('champCount').textContent = `(${champResults.length})`;
     document.getElementById('newsCount').textContent = `(${newsResults.length})`;
 
-    // 챔피언 결과 렌더링
     const champList = document.getElementById('championResultList');
     if (champResults.length === 0) {
         champList.innerHTML = `<div class="no-result"><h4>검색 결과 없음</h4><p>"${inputVal}"에 해당하는 챔피언이 없습니다.</p></div>`;
     } else {
         champList.innerHTML = champResults.map(c => `
-            <div class="search-result-card d-flex align-items-center p-0 overflow-hidden mb-3">
-                <img src="${c.img}" alt="${c.name}" style="width:100px; height:100px; object-fit:cover;">
+            <div class="search-result-card d-flex align-items-center p-0 overflow-hidden mb-3" 
+                 onclick="openChampionModal('${c.name}')" 
+                 style="cursor:pointer;">
+                <img src="${c.img || 'https://via.placeholder.com/100'}" alt="${c.name}" style="width:100px; height:100px; object-fit:cover;">
                 <div class="p-3">
                     <div style="font-weight:700; font-size:1rem; color:#111;">${c.name} <span style="color:#888; font-size:0.85rem;">(${c.engName})</span></div>
-                    <div style="color:#555; font-size:0.9rem; margin-top:4px;">역할: ${c.role} &nbsp;|&nbsp; 라인: ${c.lane} &nbsp;|&nbsp; 난이도: ${c.difficulty}</div>
+                    <div style="color:#555; font-size:0.9rem; margin-top:4px;">역할: ${c.role || '-'} &nbsp;|&nbsp; 라인: ${c.lane || '-'} &nbsp;|&nbsp; 난이도: ${c.difficulty || '-'}</div>
                 </div>
             </div>
         `).join('');
     }
 
-    // 뉴스 결과 렌더링
     const newsList = document.getElementById('newsResultList');
-    if (newsResults.length === 0) {
-        newsList.innerHTML = `<div class="no-result"><h4>검색 결과 없음</h4><p>"${inputVal}"에 해당하는 뉴스가 없습니다.</p></div>`;
-    } else {
-        newsList.innerHTML = newsResults.map(n => `
+    newsList.innerHTML = newsResults.length === 0 
+        ? `<p class="p-3">검색된 뉴스가 없습니다.</p>`
+        : newsResults.map(n => `
             <div class="search-result-card p-3 mb-3">
                 <span style="font-size:0.75rem; background:#c8253a; color:#fff; padding:2px 8px; border-radius:3px;">${n.category}</span>
                 <div style="font-weight:700; font-size:1rem; color:#111; margin-top:8px;">${n.title}</div>
                 <div style="color:#555; font-size:0.9rem; margin-top:4px;">${n.desc}</div>
             </div>
         `).join('');
-    }
 
-    // 탭 초기화 (챔피언 탭 우선)
     const firstCategoryTab = document.querySelector('.search-category-item');
     switchCategory('champion', firstCategoryTab);
 }
 
-// ── 3. 카테고리 전환 함수 ────────────────────────────────────────────
+// ── 3. 카테고리 전환 ────────────────────────────────────────────
 function switchCategory(type, el) {
     if (!el) return;
     document.querySelectorAll('.search-category-item').forEach(i => i.classList.remove('active'));
@@ -215,8 +204,40 @@ function switchCategory(type, el) {
     document.getElementById('resultNews').style.display = type === 'news' ? 'block' : 'none';
 }
 
-// ── 4. 이벤트 리스너 ────────────────────────────────────────────────
+// ── 4. 모달 열기 함수 (중요: fetch 에러 처리 추가) ───────────────────────────
+async function openChampionModal(name) {
+    try {
+        const champion = CHAMPIONS.find(c => c.name === name);
+        if (!champion || !champion.modal) {
+            console.error("모달 경로가 없는 챔피언입니다.");
+            return;
+        }
+
+        const container = document.getElementById("modalContainer");
+        const response = await fetch(champion.modal);
+        
+        if(!response.ok) throw new Error("파일을 찾을 수 없습니다.");
+        
+        const html = await response.text();
+        container.innerHTML = html;
+
+        const modalElement = container.querySelector(".modal");
+        if (!modalElement) throw new Error("HTML 내에 .modal 클래스가 없습니다.");
+
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+        modalElement.addEventListener("hidden.bs.modal", () => {
+            container.innerHTML = "";
+        });
+    } catch (error) {
+        console.error("모달 로드 실패:", error);
+        alert("모달을 불러오는 데 실패했습니다. (파일 경로 등을 확인하세요)");
+    }
+}
+
+// ── 5. 이벤트 리스너 ────────────────────────────────────────────────
 document.getElementById('searchForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    performSearch(); // 내부에서 input 값을 읽어오도록 수정됨
+    performSearch();
 });
