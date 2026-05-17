@@ -134,3 +134,12 @@ body.light-mode .table { --bs-table-bg: #fff; --bs-table-color: #212529; --bs-ta
 body.light-mode .table th { background-color: #e9ecef; color: #212529; }
 body.light-mode .accent-purple { color: #6a0dad; }
 ![alt text](image-14.png)
+
+# 12주차-1
+
+1. 저번시간에 나간 JWT와 여관되어 해시 함수에 대해 배움(SH-256 보안:적합, 실습:적합 / bcrypt 보안:강력, 실습: 실무에 사용)
+2. 개인정보를 위해 회원가입, 로그인 요청이 post가 되면 이용자의 개인정보를 위해서 노출을 시키지 않는 password는 DB에서 암호화가 되어 실제 암호가 보이지 않도록 됨.(SH-256 활용)
+3. (input_check.js-유효성 검사)
+   (input_sha256.js-Crypt API 동작 흐름)
+4. 전체 흐름: 로그인창에서 회원가입을 하여 로그인이 되기까지
+   ![alt text](image-15.png)
