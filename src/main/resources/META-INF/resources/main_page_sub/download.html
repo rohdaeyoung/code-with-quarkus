@@ -11,7 +11,12 @@
     <style>
         body { background-color: #0a0e17; color: #fff; font-family: 'Arial', sans-serif; }
         .navbar { background-color: #000; }
-        .hero { background: linear-gradient(to bottom, #1e1e1e, #0a0e17); min-height: 60vh; }
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+                        url('../image3/lol download.png') center/cover no-repeat;
+            min-height: 60vh;
+            display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem;
+        }
         .accent-purple { color: #a020f0; }
         .accent-red { color: #ff0000; }
         .card { background-color: #1e1e1e; border: none; transition: transform 0.3s, box-shadow 0.3s; }
@@ -19,6 +24,27 @@
         .card-img-top { height: 200px; object-fit: cover; border-radius: 10px 10px 0 0; }
         .btn-primary { background-color: #a020f0; border: none; }
         .btn-primary:hover { background-color: #800080; }
+
+        /* 테마 토글 버튼 */
+        #themeToggleBtn { font-size: 1.1rem; color: #fff; }
+
+        /* 라이트 모드 */
+        body.light-mode { background-color: #f8f9fa; color: #212529; }
+        body.light-mode .navbar { background-color: #e9ecef !important; }
+        body.light-mode .navbar .navbar-brand,
+        body.light-mode .navbar .nav-link { color: #212529 !important; }
+        body.light-mode #themeToggleBtn { color: #212529; }
+        body.light-mode .hero {
+            background: linear-gradient(rgba(255,255,255,0.45), rgba(220,227,234,0.75)),
+                        url('../image3/lol download.png') center/cover no-repeat;
+        }
+        body.light-mode .hero h1 { color: #6a0dad; text-shadow: none; }
+        body.light-mode .hero p { color: #333; }
+        body.light-mode .nav-tabs .nav-link { color: #212529; }
+        body.light-mode .nav-tabs .nav-link.active { background-color: #fff; color: #6a0dad; border-color: #a020f0; }
+        body.light-mode .table { --bs-table-bg: #fff; --bs-table-color: #212529; --bs-table-border-color: #dee2e6; }
+        body.light-mode .table th { background-color: #e9ecef; color: #212529; }
+        body.light-mode .accent-purple { color: #6a0dad; }
     </style>
     <link rel="stylesheet" href="../css/download.css">
 
@@ -51,6 +77,8 @@
 </div>
 </nav>
 <div class="container-fluid">
+  <!-- 다크/라이트 토글 버튼 -->
+  <button class="btn border-0" id="themeToggleBtn" onclick="toggleTheme()">🌙DARK</button>
   <a class="navbar-brand" href="#">LOL</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -167,6 +195,24 @@
             </div>
         </div>
     </section>
-    
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggleBtn');
+            const navbars = document.querySelectorAll('nav.navbar');
+
+            body.classList.toggle('light-mode');
+
+            if (body.classList.contains('light-mode')) {
+                btn.textContent = '☀️LIGHT';
+                navbars.forEach(nav => nav.setAttribute('data-bs-theme', 'light'));
+            } else {
+                btn.textContent = '🌙DARK';
+                navbars.forEach(nav => nav.setAttribute('data-bs-theme', 'dark'));
+            }
+        }
+    </script>
+
 </body>
 </html>

@@ -86,7 +86,7 @@ You can run your application in dev mode that enables live coding using:
 ![alt text](image-11.png)
 ![alt text](image-12.png)
 
-# 10주차
+# 10주차-1
 
 1. 웹 보안: 쿠키(웹브라우저에 저장) ex:장바구니
 2. 개인정보는 백엔드 자체 DB에 저장이 된 후 꺼내올 수 있도록 해야함.(다운로드 서버 창과 다름)
@@ -94,3 +94,52 @@ You can run your application in dev mode that enables live coding using:
 4. AuthResource.java파일에 login.html 파일에서 값을 받으면 파라미터가 되도록 값을 다시 받는 코드를 넣는다.
 5. extend= panacheEntity라이브러니에서 만들어진 함수를 갖다 쓸 수 있다.
 6. SessionConfig를 만들어야지 실시간으로 사람이 쓰고 있는지 검사하는 것.
+7. 로그인 폴더를 만들어 기존 index
+   ![alt text](image-13.png)
+
+# 10주차-2
+
+1.전 주에 나간 10-1내용을 이어서 로그인을 할 때 DB에서 연동이 되고 실제 사람이 로그인을 할 때 아이디 중복 등 체크하여 로그인이 가능한지 판단 하는 것을 나감.
+2.DB와 프론트,백엔드의 관계를 간단하게 배우면서 계층을 나눠 오류가 발생하였을 떄 좀 더 해결하기 편하도록 나눴음.
+
+# 10주차 요약(중요 개념)
+
+세션 방식: 로그인 정보를 서버 메모리에 저장, 클라이언트는 세션 ID(쿠키)만 보유
+JWT 방식: 토큰을 클라이언트(브라우저)에 저장, 확장성 높지만 탈취 시 위험
+도메인 패키지 구조: 계층형보다 도메인형(champion/, login/, common/)이 응집도 높고 충돌 최소화
+HTTP 상태코드: 200(성공), 302(리다이렉트/POST유지), 303(리다이렉트/GET전환), 404(없음)
+
+# 10주차 과제
+
+1. download.css에 다크,화이트 모드 코드를 추가하여 로그인창과같이 만들었음(download.html <style>에서 라이트 모드 css추가됨 )
+2. ../로 상대경로를 올바르게 보완했음
+   /_ 테마 토글 버튼 _/
+   #themeToggleBtn { font-size: 1.1rem; color: #fff; }
+
+/_ 라이트 모드 _/
+body.light-mode { background-color: #f8f9fa; color: #212529; }
+body.light-mode .navbar { background-color: #e9ecef !important; }
+body.light-mode .navbar .navbar-brand,
+body.light-mode .navbar .nav-link { color: #212529 !important; }
+body.light-mode #themeToggleBtn { color: #212529; }
+body.light-mode .hero {
+background: linear-gradient(rgba(255,255,255,0.45), rgba(220,227,234,0.75)),
+url('../image3/lol download.png') center/cover no-repeat;
+}
+body.light-mode .hero h1 { color: #6a0dad; text-shadow: none; }
+body.light-mode .hero p { color: #333; }
+body.light-mode .nav-tabs .nav-link { color: #212529; }
+body.light-mode .nav-tabs .nav-link.active { background-color: #fff; color: #6a0dad; border-color: #a020f0; }
+body.light-mode .table { --bs-table-bg: #fff; --bs-table-color: #212529; --bs-table-border-color: #dee2e6; }
+body.light-mode .table th { background-color: #e9ecef; color: #212529; }
+body.light-mode .accent-purple { color: #6a0dad; }
+![alt text](image-14.png)
+
+# 12주차-1
+
+1. 저번시간에 나간 JWT와 여관되어 해시 함수에 대해 배움(SH-256 보안:적합, 실습:적합 / bcrypt 보안:강력, 실습: 실무에 사용)
+2. 개인정보를 위해 회원가입, 로그인 요청이 post가 되면 이용자의 개인정보를 위해서 노출을 시키지 않는 password는 DB에서 암호화가 되어 실제 암호가 보이지 않도록 됨.(SH-256 활용)
+3. (input_check.js-유효성 검사)
+   (input_sha256.js-Crypt API 동작 흐름)
+4. 전체 흐름: 로그인창에서 회원가입을 하여 로그인이 되기까지
+   ![alt text](image-15.png)
