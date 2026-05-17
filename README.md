@@ -143,3 +143,4 @@ body.light-mode .accent-purple { color: #6a0dad; }
    (input_sha256.js-Crypt API 동작 흐름)
 4. 전체 흐름: 로그인창에서 회원가입을 하여 로그인이 되기까지
    ![alt text](image-15.png)
+   ![alt text](image-16.png)
