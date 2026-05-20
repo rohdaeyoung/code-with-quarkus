@@ -9,8 +9,25 @@ import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.io.InputStream;
 
+
+
 @Path("/") // 기본 경로가 최상위 /
 public class AuthResource {
+    // GET / → 세션 유무에 따라 메인 페이지 분기
+@GET
+@Produces(MediaType.TEXT_HTML)
+public Response mainPage() {
+String loginUser = context.session().get("loginUser");
+System.out.println("=== [GET /] 세션 ID : " +
+context.session().id());
+System.out.println("=== [GET /] loginUser : " + loginUser);
+String htmlPath = (loginUser != null)
+? "META-INF/resources/login/main_after_login.html"
+: "META-INF/resources/main_index.html";
+InputStream html =
+getClass().getClassLoader().getResourceAsStream(htmlPath);
+return Response.ok(html).build();
+}
     
     @Inject
     RoutingContext context;
@@ -43,9 +60,12 @@ public class AuthResource {
 
         context.session().put("loginUser", username);
         return Response
-            .seeOther(URI.create("/after_login"))
+            .seeOther(URI.create("/"))
             .build();
     }
+
+
+    
 
     @GET
     @Path("/after_login")
