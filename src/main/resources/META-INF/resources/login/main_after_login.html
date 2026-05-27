@@ -470,6 +470,20 @@ body.light-mode .card-text { color: #555; }
 
      <script src="../js/search.js"></script>
      <script src="../js/toggle.js"></script>
-    
+
+     <!-- 프로필 툴팁: 마우스 올리면 아이디 표시 -->
+     <script>
+     fetch('/api/profile')
+         .then(res => { if (!res.ok) return null; return res.json(); })
+         .then(data => {
+             if (!data) return;
+             const profileLink = document.getElementById('profileNavLink');
+             if (profileLink) {
+                 profileLink.setAttribute('data-bs-title', '👋 ' + data.username);
+                 new bootstrap.Tooltip(profileLink);
+             }
+         });
+     </script>
+
 </body>
 </html>
