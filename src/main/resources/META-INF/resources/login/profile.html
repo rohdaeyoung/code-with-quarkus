@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League of Legends - 내 프로필</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <style>
+        body { background-color: #0a0e17; color: #fff; font-family: 'Arial', sans-serif; }
+        .navbar { background-color: #000; }
+        #themeToggleBtn { font-size: 1.1rem; color: #fff; }
+        body.light-mode { background-color: #f8f9fa; color: #212529; }
+        body.light-mode .navbar { background-color: #e9ecef !important; }
+        body.light-mode .navbar .navbar-brand,
+        body.light-mode .navbar .nav-link { color: #212529 !important; }
+        body.light-mode #themeToggleBtn { color: #212529; }
+        body.light-mode .card { background-color: #ffffff !important; color: #212529 !important; border: 1px solid #dee2e6 !important; }
+        body.light-mode .table { --bs-table-bg: #fff; --bs-table-color: #212529; }
+        body.light-mode .table th { background-color: #e9ecef; color: #212529; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+        <nav class="navbar bg-body-tertiary">
+            <div class="container">
+                <a class="img" href="/">
+                    <img src="../image1/logo.jpeg" alt="Logo" width="30" height="24">
+                </a>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <button class="btn border-0" id="themeToggleBtn" onclick="toggleTheme()">🌙DARK</button>
+            <a class="navbar-brand" href="/">LOL</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">뉴스</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">챔피언</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../main_page_sub/download.html">다운로드</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1 active" href="/profile">
+                            <i class="bi bi-person-circle fs-5"></i> 프로필
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-danger btn-sm px-3" href="/logout">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 기존 로그인 등 페이지의 디자인을 재활용한다. -->
+    <section class="hero d-flex align-items-center
+            justify-content-center text-center py-5">
+        <div class="container" style="max-width: 500px;">
+            <h2 class="fw-bold mb-4">🧑 내 프로필</h2>
+
+            <!-- 프로필 사진 영역 -->
+            <div class="mb-4">
+                <img id="profileImg"
+                    src="/uploads/profile/default.png"
+                    class="rounded-circle"
+                    width="120" height="120"
+                    style="object-fit:cover; border:3px solid #fff;"
+                    alt="프로필 사진"
+                    onerror="this.src='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/icons/person-circle.svg'; this.style.filter='invert(1)';">
+            </div>
+
+            <!-- 개인 정보 출력 -->
+            <div class="card bg-dark text-white border-secondary mb-4">
+                <div class="card-body text-start">
+                    <table class="table table-dark table-bordered mb-0">
+                        <tr>
+                            <th style="width:30%">아이디</th>
+                            <td id="infoUsername"></td>
+                        </tr>
+                        <tr>
+                            <th>이메일</th>
+                            <td id="infoEmail"></td>
+                        </tr>
+                        <tr>
+                            <th>연락처</th>
+                            <td id="infoPhone"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 사진 업로드 폼 -->
+            <form id="uploadForm"
+                  method="POST"
+                  action="/profile/upload"
+                  enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">프로필 사진 변경</label>
+                    <input type="file"
+                           class="form-control"
+                           id="profileFile"
+                           name="profileImage"
+                           accept="image/jpeg,image/png,image/gif,image/webp">
+                    <div class="form-text text-muted">
+                        jpg, png, gif, webp / 최대 5MB
+                    </div>
+                </div>
+                <button type="submit"
+                        class="btn btn-primary w-100">
+                    사진 업로드
+                </button>
+            </form>
+
+        </div>
+    </section>
+
+    <!-- JS 연동 -->
+    <script src="../js/search.js"></script>
+    <script src="../js/toggle.js"></script>
+    <script src="../js/Profile.js"></script>
+</body>
+</html>
