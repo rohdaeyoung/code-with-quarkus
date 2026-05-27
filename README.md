@@ -135,7 +135,7 @@ body.light-mode .table th { background-color: #e9ecef; color: #212529; }
 body.light-mode .accent-purple { color: #6a0dad; }
 ![alt text](image-14.png)
 
-# 12주차-1
+# 11주차-1
 
 1. 저번시간에 나간 JWT와 여관되어 해시 함수에 대해 배움(SH-256 보안:적합, 실습:적합 / bcrypt 보안:강력, 실습: 실무에 사용)
 2. 개인정보를 위해 회원가입, 로그인 요청이 post가 되면 이용자의 개인정보를 위해서 노출을 시키지 않는 password는 DB에서 암호화가 되어 실제 암호가 보이지 않도록 됨.(SH-256 활용)
@@ -145,7 +145,7 @@ body.light-mode .accent-purple { color: #6a0dad; }
    ![alt text](image-15.png)
    ![alt text](image-16.png)
 
-# 12주차-2
+# 12주차-1
 
 1. 전 시간에 하였던 암호화 로그인 후 데이터 베이스에 저장되어 메인 홈 화면 페이지로 전달되게 하였음(login.html 로그인 부분 수정-상대경로로 경로를 제대로 설정)
 
@@ -158,3 +158,14 @@ body.light-mode .accent-purple { color: #6a0dad; }
 
 5. 프로필 제작 초반부까지 나갔음(main_afer_login.html 로그아웃 코드 상단에 프로필 추가)
    ![alt text](image-17.png)
+
+# 12주차-2
+
+1. AuthorResource.java파일에서 profiled을 불러오도록 코드 추가.
+2. main_after_login파일에 로그인 후 프로필이 뜨게끔 추가
+3. 프로필에서 upload/profile에 프로필 이미지 추가
+4. 프로필에 마우스를 올려 놓으면 툴팁이 나오게끔
+5. 기존 index_main파일에 alert()는 화면을 완전히 차단하고 버튼 클릭이 필수이므로 실제 서비스에서는 미사용
+6. Bootstrap5 Toast는 화면 차단 없이 자동으로 사라지는 비방해형 알림
+   ![alt text](image-18.png)
+   ![alt text](image-19.png)

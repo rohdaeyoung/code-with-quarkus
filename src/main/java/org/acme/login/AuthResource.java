@@ -8,6 +8,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.io.InputStream;
+import java.util.UUID;
+import java.nio.file.Paths;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+import org.jboss.resteasy.reactive.RestForm;
 
 
 
@@ -28,6 +32,9 @@ InputStream html =
 getClass().getClassLoader().getResourceAsStream(htmlPath);
 return Response.ok(html).build();
 }
+
+
+
     
     @Inject
     RoutingContext context;
@@ -149,4 +156,82 @@ return Response.ok(html).build();
             .getResourceAsStream("META-INF/resources/login/register_success.html");
         return Response.ok(html).build();
     }
+
+    @GET
+    @Path("/profile")
+    @Produces(MediaType.TEXT_HTML)
+    public Response profilePage() {
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.seeOther(URI.create("/login")).build();
+        }
+        InputStream html = getClass()
+            .getClassLoader()
+            .getResourceAsStream("META-INF/resources/login/profile.html");
+        return Response.ok(html).build();
+    }
+
+    @POST
+    @Path("/profile/upload")
+    @Transactional
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response profileUpload(@RestForm("profileImage") FileUpload file) {
+        // ① 세션 체크
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.seeOther(URI.create("/login")).build();
+        }
+        try {
+            // ② 확장자 검사
+            String original = file.fileName();
+            String ext = original.substring(original.lastIndexOf('.') + 1).toLowerCase();
+            if (!ext.matches("jpg|jpeg|png|gif|webp")) {
+                return Response.seeOther(URI.create("/profile?error=invalid_type")).build();
+            }
+            // ③ 파일 크기 검사 (5MB)
+            if (file.size() > 5 * 1024 * 1024) {
+                return Response.seeOther(URI.create("/profile?error=too_large")).build();
+            }
+            // ④ UUID 파일명 생성 + 저장
+            String newFileName = UUID.randomUUID() + "." + ext;
+            java.nio.file.Path uploadDir = Paths.get(
+                "src/main/resources/META-INF/resources/uploads/profile");
+            java.nio.file.Files.createDirectories(uploadDir);
+            java.nio.file.Files.copy(file.uploadedFile(),
+                uploadDir.resolve(newFileName),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            // ⑤ DB에 파일명 저장
+            User user = User.findByUsername(loginUser);
+            user.profileImage = newFileName;
+            user.persist();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.seeOther(URI.create("/profile?error=upload_failed")).build();
+        }
+        return Response.seeOther(URI.create("/profile")).build();
+    }
+
+    // 프로필 정보를 JSON으로 반환하는 API
+    @GET
+    @Path("/api/profile")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response profileApi() {
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        User user = User.findByUsername(loginUser);
+        String json = String.format(
+            "{\"username\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"profileImage\":\"%s\"}",
+            user.username,
+            user.email != null ? user.email : "",
+            user.phone != null ? user.phone : "",
+            user.profileImage != null ? user.profileImage : "default.png"
+        );
+        return Response.ok(json).build();
+    }
+
 }
+
+
+

@@ -14,6 +14,7 @@ public class User extends PanacheEntity {
     @Column(unique = true) // 이메일 중복 방지
     public String email;
     public String phone; // 연락처
+    public String profileImage; // 프로필 이미지 파일명
     
     public static User findByUsername(String username) {
         return find("username", username).firstResult();
@@ -22,4 +23,7 @@ public class User extends PanacheEntity {
     public static User findByEmail(String email) {
         return find("email", email).firstResult();
     }
+
+
+
 }
