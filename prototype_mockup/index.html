@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>전세안전 프로젝트 — 프로토타입</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width:1280px; height:720px; overflow:hidden;
+  font-family:'Malgun Gothic','맑은 고딕',sans-serif;
+}
+.scene {
+  width:1280px; height:720px; position:relative; overflow:hidden;
+  background: linear-gradient(180deg, #87CEEB 0%, #B8E4FF 38%, #7EC850 38%, #5DA832 100%);
+}
+
+/* Clouds */
+.cloud {
+  position:absolute; background:rgba(255,255,255,0.88);
+  border-radius:50px; filter:blur(3px);
+  animation: drift linear infinite;
+}
+@keyframes drift { from{transform:translateX(-300px)} to{transform:translateX(1600px)} }
+.c1{width:160px;height:50px;top:45px;left:5%;animation-duration:35s;}
+.c2{width:110px;height:36px;top:80px;left:38%;animation-duration:50s;animation-delay:-20s;}
+.c3{width:200px;height:55px;top:28px;left:70%;animation-duration:42s;animation-delay:-10s;}
+.c4{width:80px;height:28px;top:110px;left:20%;animation-duration:60s;animation-delay:-30s;}
+
+/* Ground details */
+.ground-stripe {
+  position:absolute; bottom:0; left:0; right:0; height:275px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+    transparent 1px, transparent 80px
+  ), linear-gradient(180deg, #6BBF3C 0%, #4E9A28 100%);
+}
+
+/* Trees decoration */
+.tree { position:absolute; font-size:48px; filter:drop-shadow(3px 5px 6px rgba(0,0,0,0.2)); }
+
+/* Buildings background */
+.bld {
+  position:absolute; border-radius:6px 6px 0 0;
+  box-shadow:4px 6px 16px rgba(0,0,0,0.2);
+}
+
+/* Roads */
+.road { position:absolute; background:linear-gradient(180deg,#C8A96E,#B8945A); }
+.road-h { height:20px; left:0; right:0; border-top:3px solid #D4B87A; border-bottom:3px solid #9A6A3C; }
+
+/* ===== CENTER CARD ===== */
+.center-card {
+  position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+  width:680px;
+  background:rgba(255,255,255,0.97);
+  border-radius:32px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.8);
+  overflow:hidden; z-index:50;
+}
+
+/* Card header */
+.card-header {
+  background:linear-gradient(135deg,#1565C0 0%,#0D47A1 50%,#1A237E 100%);
+  padding:28px 36px 24px;
+  display:flex; flex-direction:column; align-items:center;
+  position:relative; overflow:hidden;
+}
+.card-header::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12) 0%, transparent 60%);
+}
+.header-icon { font-size:52px; margin-bottom:8px; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+.header-title {
+  color:white; font-size:28px; font-weight:bold;
+  text-shadow:0 3px 8px rgba(0,0,0,0.25); margin-bottom:4px;
+  letter-spacing:1px;
+}
+.header-sub { color:rgba(255,255,255,0.75); font-size:14px; }
+
+/* Stage badges */
+.stage-row {
+  display:flex; gap:8px; margin-top:14px;
+}
+.stage-badge {
+  background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3);
+  border-radius:12px; padding:4px 12px; color:rgba(255,255,255,0.85); font-size:12px;
+  display:flex; align-items:center; gap:4px;
+}
+
+/* Card body */
+.card-body { padding:24px 32px 28px; }
+.menu-label {
+  font-size:12px; font-weight:bold; color:#9E9E9E;
+  letter-spacing:2px; margin-bottom:14px; text-align:center;
+}
+
+/* Menu buttons */
+.menu-btn {
+  display:flex; align-items:center; gap:16px;
+  width:100%; padding:14px 20px; margin-bottom:12px;
+  border-radius:18px; border:2.5px solid; cursor:pointer;
+  text-align:left; font-family:inherit; transition:all 0.18s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  text-decoration:none;
+}
+.menu-btn:hover { transform:translateX(6px) translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.15); }
+.menu-btn:last-child { margin-bottom:0; }
+
+.btn-1 { background:linear-gradient(135deg,#E3F2FD,#BBDEFB); border-color:#42A5F5; }
+.btn-1:hover { background:linear-gradient(135deg,#BBDEFB,#90CAF9); }
+.btn-2 { background:linear-gradient(135deg,#E8F5E9,#C8E6C9); border-color:#66BB6A; }
+.btn-2:hover { background:linear-gradient(135deg,#C8E6C9,#A5D6A7); }
+.btn-3 { background:linear-gradient(135deg,#FFF8E1,#FFE0B2); border-color:#FFA726; }
+.btn-3:hover { background:linear-gradient(135deg,#FFE0B2,#FFCC80); }
+.btn-4 { background:linear-gradient(135deg,#F3E5F5,#E1BEE7); border-color:#AB47BC; }
+.btn-4:hover { background:linear-gradient(135deg,#E1BEE7,#CE93D8); }
+
+.btn-icon {
+  width:46px; height:46px; border-radius:14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.12);
+}
+.icon-1 { background:linear-gradient(135deg,#42A5F5,#1565C0); }
+.icon-2 { background:linear-gradient(135deg,#66BB6A,#2E7D32); }
+.icon-3 { background:linear-gradient(135deg,#FFA726,#E65100); }
+.icon-4 { background:linear-gradient(135deg,#AB47BC,#6A1B9A); }
+
+.btn-text { flex:1; }
+.btn-title { font-size:15px; font-weight:bold; color:#212121; margin-bottom:3px; }
+.btn-desc { font-size:12px; color:#757575; }
+.btn-arrow { font-size:18px; color:#BDBDBD; flex-shrink:0; transition:transform 0.18s; }
+.menu-btn:hover .btn-arrow { transform:translateX(4px); color:#9E9E9E; }
+
+/* Step indicator */
+.step-row {
+  display:flex; align-items:center; justify-content:center;
+  gap:0; margin-top:20px;
+}
+.step-item {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  width:80px;
+}
+.step-dot {
+  width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:bold; color:white;
+  box-shadow:0 3px 8px rgba(0,0,0,0.15);
+}
+.step-text { font-size:10px; color:#9E9E9E; text-align:center; }
+.step-line { flex:1; height:3px; background:#E0E0E0; margin-bottom:14px; }
+.step-line.done { background:linear-gradient(90deg,#66BB6A,#43A047); }
+.dot-1{background:linear-gradient(135deg,#42A5F5,#1565C0);}
+.dot-2{background:linear-gradient(135deg,#66BB6A,#2E7D32);}
+.dot-3{background:linear-gradient(135deg,#FFA726,#E65100);}
+.dot-4{background:linear-gradient(135deg,#AB47BC,#6A1B9A);}
+
+/* Floating characters */
+.float-char {
+  position:absolute; font-size:40px; z-index:20;
+  filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+  animation:floatBob 3s ease-in-out infinite;
+}
+@keyframes floatBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+/* Sun */
+.sun {
+  position:absolute; top:30px; right:80px;
+  width:60px; height:60px; border-radius:50%;
+  background:radial-gradient(circle, #FFE066, #FFB300);
+  box-shadow:0 0 30px rgba(255,200,0,0.6), 0 0 60px rgba(255,200,0,0.2);
+  animation:sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse { 0%,100%{box-shadow:0 0 30px rgba(255,200,0,0.6), 0 0 60px rgba(255,200,0,0.2);} 50%{box-shadow:0 0 40px rgba(255,200,0,0.8), 0 0 80px rgba(255,200,0,0.3);} }
+.sun-ray {
+  position:absolute; top:50%; left:50%; width:80px; height:3px;
+  background:linear-gradient(90deg,rgba(255,220,0,0.6),transparent);
+  transform-origin:0 50%;
+  border-radius:2px;
+}
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <!-- Sky & sun -->
+  <div class="sun">
+    <div class="sun-ray" style="transform:rotate(0deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(45deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(90deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(135deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(180deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(225deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(270deg) translateX(30px);"></div>
+    <div class="sun-ray" style="transform:rotate(315deg) translateX(30px);"></div>
+  </div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+
+  <!-- Background buildings -->
+  <div class="bld" style="left:40px;bottom:275px;width:80px;height:160px;background:linear-gradient(180deg,#64B5F6,#1976D2);border:2px solid #90CAF9;"></div>
+  <div class="bld" style="left:130px;bottom:275px;width:60px;height:110px;background:linear-gradient(180deg,#FF8A65,#E64A19);border:2px solid #FFAB91;"></div>
+  <div class="bld" style="left:200px;bottom:275px;width:50px;height:85px;background:linear-gradient(180deg,#80CBC4,#00796B);border:2px solid #B2DFDB;"></div>
+  <div class="bld" style="right:40px;bottom:275px;width:90px;height:180px;background:linear-gradient(180deg,#CE93D8,#7B1FA2);border:2px solid #E1BEE7;"></div>
+  <div class="bld" style="right:145px;bottom:275px;width:65px;height:130px;background:linear-gradient(180deg,#A5D6A7,#388E3C);border:2px solid #C8E6C9;"></div>
+  <div class="bld" style="right:225px;bottom:275px;width:55px;height:95px;background:linear-gradient(180deg,#FFE082,#F9A825);border:2px solid #FFF176;"></div>
+
+  <!-- Road -->
+  <div class="road road-h" style="bottom:275px;"></div>
+
+  <!-- Ground -->
+  <div class="ground-stripe"></div>
+
+  <!-- Trees -->
+  <div class="tree" style="left:285px;bottom:250px;">🌳</div>
+  <div class="tree" style="left:320px;bottom:245px;font-size:36px;">🌲</div>
+  <div class="tree" style="right:300px;bottom:250px;">🌳</div>
+  <div class="tree" style="right:340px;bottom:240px;font-size:32px;">🌿</div>
+  <div class="tree" style="left:50px;bottom:240px;font-size:32px;">🌿</div>
+  <div class="tree" style="right:50px;bottom:242px;font-size:34px;">🌿</div>
+
+  <!-- Floating characters -->
+  <div class="float-char" style="left:220px;bottom:310px;animation-delay:0s;">🧑‍💼</div>
+  <div class="float-char" style="right:190px;bottom:310px;animation-delay:1.5s;font-size:34px;">👨‍💼</div>
+
+  <!-- Center card -->
+  <div class="center-card">
+    <div class="card-header">
+      <div class="header-icon">🏠</div>
+      <div class="header-title">전세안전 프로젝트</div>
+      <div class="header-sub">전세사기 예방 시뮬레이션 게임 · 프로토타입</div>
+      <div class="stage-row">
+        <div class="stage-badge">🗺️ 매물 탐색</div>
+        <div class="stage-badge">📄 서류 검토</div>
+        <div class="stage-badge">🤝 협상</div>
+        <div class="stage-badge">🏆 계약 결과</div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="menu-label">▼ 화면을 선택하세요</div>
+
+      <a class="menu-btn btn-1" href="screen1_map.html">
+        <div class="btn-icon icon-1">🗺️</div>
+        <div class="btn-text">
+          <div class="btn-title">화면 1 — 매물 탐색 맵</div>
+          <div class="btn-desc">7개 매물 핀 · 플레이어 이동 · D-7 타이머 · 위험도 표시</div>
+        </div>
+        <div class="btn-arrow">›</div>
+      </a>
+
+      <a class="menu-btn btn-2" href="screen2_docs.html">
+        <div class="btn-icon icon-2">📄</div>
+        <div class="btn-text">
+          <div class="btn-title">화면 2 — 서류 검토 UI</div>
+          <div class="btn-desc">등기부등본 뷰어 · 10항목 체크리스트 · 계약 안전도 게이지</div>
+        </div>
+        <div class="btn-arrow">›</div>
+      </a>
+
+      <a class="menu-btn btn-3" href="screen3_negotiate.html">
+        <div class="btn-icon icon-3">🤝</div>
+        <div class="btn-text">
+          <div class="btn-title">화면 3 — 협상 대화창</div>
+          <div class="btn-desc">임대인 NPC 면담 · 3가지 선택지 · 안전도/신뢰도 영향</div>
+        </div>
+        <div class="btn-arrow">›</div>
+      </a>
+
+      <a class="menu-btn btn-4" href="screen4_result.html">
+        <div class="btn-icon icon-4">🏆</div>
+        <div class="btn-text">
+          <div class="btn-title">화면 4 — 계약 결과</div>
+          <div class="btn-desc">점수 원형 게이지 · 항목별 평가 · 학습 포인트</div>
+        </div>
+        <div class="btn-arrow">›</div>
+      </a>
+
+      <!-- Step flow -->
+      <div class="step-row">
+        <div class="step-item">
+          <div class="step-dot dot-1">1</div>
+          <div class="step-text">매물<br>탐색</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-dot dot-2">2</div>
+          <div class="step-text">서류<br>검토</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-dot dot-3">3</div>
+          <div class="step-text">협상<br>진행</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-dot dot-4">4</div>
+          <div class="step-text">결과<br>확인</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

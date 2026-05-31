@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>전세안전 - 최종 결과 & 랭킹</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1280px;height:720px;overflow:hidden;font-family:'Malgun Gothic','맑은 고딕',sans-serif;}
+.scene{width:1280px;height:720px;
+  background:linear-gradient(135deg,#0d1b3e 0%,#1a2a5e 50%,#0a1228 100%);
+  position:relative;overflow:hidden;}
+
+/* Confetti */
+.conf-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.conf{position:absolute;border-radius:2px;animation:cfFall linear infinite;}
+@keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(740px) rotate(720deg);opacity:0.2}}
+
+/* Stars bg */
+.stars{position:absolute;inset:0;}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle 3s infinite;}
+@keyframes twinkle{0%,100%{opacity:0.2}50%{opacity:0.8}}
+
+/* ── MAIN LAYOUT ── */
+.main{position:absolute;inset:0;display:flex;flex-direction:column;padding:14px;gap:12px;}
+
+/* ── TOP: Winner banner ── */
+.winner-banner{background:linear-gradient(90deg,rgba(20,30,80,0.95),rgba(30,50,120,0.9),rgba(20,30,80,0.95));
+  border:2px solid rgba(255,215,0,0.5);border-radius:20px;
+  padding:14px 24px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 0 30px rgba(255,215,0,0.15),0 8px 24px rgba(0,0,0,0.4);}
+.wb-left{display:flex;align-items:center;gap:16px;}
+.wb-trophy{font-size:52px;filter:drop-shadow(0 0 12px rgba(255,215,0,0.6));animation:trophyBob 2s ease-in-out infinite;}
+@keyframes trophyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.wb-text{}
+.wb-subtitle{color:rgba(255,215,0,0.7);font-size:12px;letter-spacing:2px;margin-bottom:4px;}
+.wb-title{color:#FFD700;font-size:24px;font-weight:bold;text-shadow:0 0 20px rgba(255,215,0,0.5);}
+.wb-sub{color:rgba(255,255,255,0.6);font-size:13px;margin-top:3px;}
+.wb-right{display:flex;gap:14px;}
+.wb-stat{text-align:center;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  border-radius:14px;padding:8px 18px;}
+.wb-stat-val{font-size:22px;font-weight:bold;color:#FFD700;}
+.wb-stat-label{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+
+/* ── MIDDLE: Rankings + My result ── */
+.middle-row{flex:1;display:flex;gap:12px;overflow:hidden;}
+
+/* Ranking table */
+.ranking-card{width:440px;flex-shrink:0;background:rgba(10,18,55,0.9);
+  border:2px solid rgba(80,140,255,0.3);border-radius:18px;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,0.4);}
+.rc-header{background:linear-gradient(90deg,#1565C0,#0D47A1);
+  padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.rc-title{color:white;font-size:14px;font-weight:bold;}
+.rc-subtitle{color:rgba(255,255,255,0.55);font-size:11px;margin-left:auto;}
+
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.05);position:relative;overflow:hidden;}
+.rank-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.rank-row.r1::before{background:linear-gradient(180deg,#FFD700,#FFA000);}
+.rank-row.r2::before{background:linear-gradient(180deg,#B0BEC5,#78909C);}
+.rank-row.r3::before{background:linear-gradient(180deg,#A0522D,#6D4C41);}
+.rank-row.rme{background:rgba(33,150,243,0.08);}
+
+.rank-num{font-size:22px;font-weight:bold;width:34px;text-align:center;flex-shrink:0;}
+.rn1{color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,0.5);}
+.rn2{color:#B0BEC5;}
+.rn3{color:#A0522D;}
+.rn4{color:rgba(255,255,255,0.35);}
+
+.rank-avatar{width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+
+.rank-info{flex:1;}
+.rank-name{font-size:13px;font-weight:bold;color:rgba(255,255,255,0.9);}
+.rank-name span{font-size:10px;color:rgba(33,150,243,0.8);margin-left:6px;}
+.rank-detail{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
+
+.rank-score-col{text-align:right;}
+.rank-score{font-size:20px;font-weight:bold;}
+.rs-gold{color:#FFD700;} .rs-silver{color:#B0BEC5;} .rs-bronze{color:#A0522D;} .rs-normal{color:rgba(255,255,255,0.5);}
+.rank-grade{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
+
+.rank-bar-wrap{width:80px;}
+.rank-bar-bg{height:6px;background:rgba(255,255,255,0.07);border-radius:3px;margin-top:4px;}
+.rank-bar-fill{height:100%;border-radius:3px;}
+
+/* My detail result */
+.my-result-card{flex:1;display:flex;flex-direction:column;gap:10px;}
+
+.my-score-card{background:rgba(10,18,55,0.9);border:2px solid rgba(80,140,255,0.3);
+  border-radius:18px;padding:14px 18px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.4);}
+.msc-title{font-size:11px;font-weight:bold;color:rgba(140,180,255,0.7);
+  letter-spacing:2px;margin-bottom:10px;}
+.msc-body{display:flex;gap:16px;align-items:flex-start;}
+.msc-ring{position:relative;flex-shrink:0;}
+svg.ring{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:10;}
+.ring-fill{fill:none;stroke:url(#rgrad);stroke-width:10;stroke-linecap:round;
+  stroke-dasharray:502;stroke-dashoffset:110;}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.ring-num{font-size:32px;font-weight:bold;color:#FFD700;line-height:1;}
+.ring-max{font-size:11px;color:rgba(255,255,255,0.35);}
+.msc-breakdown{flex:1;}
+.mbd-title{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:8px;}
+.mbd-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.mbd-label{font-size:11px;color:rgba(255,255,255,0.55);width:80px;}
+.mbd-bar-bg{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.mbd-bar-fill{height:100%;border-radius:4px;}
+.mbd-val{font-size:11px;font-weight:bold;color:rgba(255,255,255,0.8);width:24px;text-align:right;}
+
+/* Condition achievement */
+.cond-card{background:rgba(10,18,55,0.9);border:2px solid rgba(80,140,255,0.3);
+  border-radius:18px;padding:14px 18px;flex:1;
+  box-shadow:0 6px 24px rgba(0,0,0,0.4);}
+.cc-title{font-size:11px;font-weight:bold;color:rgba(140,180,255,0.7);
+  letter-spacing:2px;margin-bottom:10px;}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cc-item{border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;}
+.cc-item.ok{background:rgba(76,175,80,0.12);border:1px solid rgba(76,175,80,0.3);}
+.cc-item.no{background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.25);}
+.cc-item.partial{background:rgba(255,152,0,0.1);border:1px solid rgba(255,152,0,0.3);}
+.cc-icon{font-size:16px;flex-shrink:0;}
+.cc-info{flex:1;}
+.cc-name{font-size:11px;color:rgba(255,255,255,0.8);font-weight:bold;}
+.cc-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px;}
+.cc-pts{font-size:13px;font-weight:bold;}
+.cc-pts.green{color:#69F0AE;} .cc-pts.red{color:#FF5252;} .cc-pts.orange{color:#FFB74D;}
+
+/* ── BOTTOM: Learning & buttons ── */
+.bottom-row{display:flex;gap:12px;}
+.learn-card{flex:1;background:rgba(10,18,55,0.9);border:1.5px solid rgba(255,200,50,0.3);
+  border-radius:14px;padding:10px 16px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);}
+.lc-title{font-size:11px;font-weight:bold;color:rgba(255,200,50,0.7);
+  letter-spacing:1px;margin-bottom:7px;}
+.lc-items{display:flex;gap:8px;}
+.lc-item{flex:1;background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);
+  border-radius:8px;padding:7px 9px;font-size:11px;color:rgba(255,220,100,0.85);line-height:1.6;}
+.lc-item::before{content:'💡 ';}
+
+.btn-area{display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:200px;justify-content:center;}
+.result-btn{padding:10px 0;border-radius:12px;border:none;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:all 0.15s;}
+.result-btn:hover{transform:translateY(-2px);}
+.rb-next{background:linear-gradient(135deg,#43A047,#2E7D32);color:white;}
+.rb-retry{background:linear-gradient(135deg,#1565C0,#0D47A1);color:white;}
+.rb-home{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);}
+</style>
+</head>
+<body>
+<div class="scene">
+
+<!-- Stars -->
+<div class="stars">
+  <div class="star" style="left:5%;top:8%;width:2px;height:2px;animation-delay:0s;"></div>
+  <div class="star" style="left:15%;top:15%;width:1px;height:1px;animation-delay:0.5s;"></div>
+  <div class="star" style="left:80%;top:5%;width:2px;height:2px;animation-delay:1s;"></div>
+  <div class="star" style="left:92%;top:20%;width:1px;height:1px;animation-delay:1.5s;"></div>
+  <div class="star" style="left:60%;top:10%;width:2px;height:2px;animation-delay:0.8s;"></div>
+  <div class="star" style="left:35%;top:6%;width:1px;height:1px;animation-delay:2s;"></div>
+</div>
+
+<!-- Confetti -->
+<div class="conf-wrap">
+  <div class="conf" style="left:8%;width:9px;height:15px;background:#FFD700;animation-duration:3.2s;"></div>
+  <div class="conf" style="left:20%;width:7px;height:7px;background:#4CAF50;border-radius:50%;animation-duration:4.5s;animation-delay:0.5s;"></div>
+  <div class="conf" style="left:38%;width:11px;height:9px;background:#2196F3;animation-duration:3.8s;animation-delay:1s;"></div>
+  <div class="conf" style="left:55%;width:8px;height:16px;background:#F44336;animation-duration:4.1s;animation-delay:0.3s;"></div>
+  <div class="conf" style="left:70%;width:10px;height:10px;background:#9C27B0;border-radius:50%;animation-duration:3.5s;animation-delay:1.8s;"></div>
+  <div class="conf" style="left:85%;width:7px;height:13px;background:#FF9800;animation-duration:4.8s;animation-delay:0.7s;"></div>
+</div>
+
+<div class="main">
+
+  <!-- WINNER BANNER -->
+  <div class="winner-banner">
+    <div class="wb-left">
+      <div class="wb-trophy">🏆</div>
+      <div class="wb-text">
+        <div class="wb-subtitle">🎉 ROUND COMPLETE — 4인 대전 결과</div>
+        <div class="wb-title">AI 플레이어 1 우승!</div>
+        <div class="wb-sub">랜덤 조건 최고 달성 · 안전도 점수 1위 · 사기 NPC 2건 탐지</div>
+      </div>
+    </div>
+    <div class="wb-right">
+      <div class="wb-stat"><div class="wb-stat-val">7일</div><div class="wb-stat-label">게임 진행</div></div>
+      <div class="wb-stat"><div class="wb-stat-val">4명</div><div class="wb-stat-label">참가자</div></div>
+      <div class="wb-stat"><div class="wb-stat-val" style="color:#FF5252;">3건</div><div class="wb-stat-label">사기 발생</div></div>
+      <div class="wb-stat"><div class="wb-stat-val" style="color:#69F0AE;">92점</div><div class="wb-stat-label">최고 점수</div></div>
+    </div>
+  </div>
+
+  <!-- MIDDLE -->
+  <div class="middle-row">
+
+    <!-- RANKING -->
+    <div class="ranking-card">
+      <div class="rc-header">
+        <span>🏅</span>
+        <span class="rc-title">최종 랭킹</span>
+        <span class="rc-subtitle">랜덤 조건 달성도 기준 순위</span>
+      </div>
+
+      <!-- 1st -->
+      <div class="rank-row r1">
+        <div class="rank-num rn1">1</div>
+        <div class="rank-avatar" style="background:linear-gradient(135deg,#388E3C,#1B5E20);">🤖</div>
+        <div class="rank-info">
+          <div class="rank-name">AI 플레이어 1</div>
+          <div class="rank-detail">안전도 92 · 조건달성 89% · 사기탐지 2건 · D-6 완료</div>
+          <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:89%;background:linear-gradient(90deg,#FFD700,#FFA000);"></div></div></div>
+        </div>
+        <div class="rank-score-col">
+          <div class="rank-score rs-gold">92</div>
+          <div class="rank-grade">🥇 S등급</div>
+        </div>
+      </div>
+
+      <!-- 2nd: Me -->
+      <div class="rank-row r2 rme">
+        <div class="rank-num rn2">2</div>
+        <div class="rank-avatar" style="background:linear-gradient(135deg,#1565C0,#0D47A1);">🧑‍💼</div>
+        <div class="rank-info">
+          <div class="rank-name">나 (플레이어) <span>▶ 나</span></div>
+          <div class="rank-detail">안전도 78 · 조건달성 68% · 사기탐지 1건 · D-7 완료</div>
+          <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:68%;background:linear-gradient(90deg,#42A5F5,#1565C0);"></div></div></div>
+        </div>
+        <div class="rank-score-col">
+          <div class="rank-score rs-silver">78</div>
+          <div class="rank-grade">🥈 A등급</div>
+        </div>
+      </div>
+
+      <!-- 3rd -->
+      <div class="rank-row r3">
+        <div class="rank-num rn3">3</div>
+        <div class="rank-avatar" style="background:linear-gradient(135deg,#F57F17,#E65100);">👩‍💼</div>
+        <div class="rank-info">
+          <div class="rank-name">이민지 (온라인)</div>
+          <div class="rank-detail">안전도 61 · 조건달성 52% · 패널티 2회 · D-7 완료</div>
+          <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:52%;background:linear-gradient(90deg,#FF9800,#E65100);"></div></div></div>
+        </div>
+        <div class="rank-score-col">
+          <div class="rank-score rs-bronze">61</div>
+          <div class="rank-grade">🥉 B등급</div>
+        </div>
+      </div>
+
+      <!-- 4th -->
+      <div class="rank-row">
+        <div class="rank-num rn4">4</div>
+        <div class="rank-avatar" style="background:linear-gradient(135deg,#7B1FA2,#4A148C);">🤖</div>
+        <div class="rank-info">
+          <div class="rank-name">AI 플레이어 2</div>
+          <div class="rank-detail">안전도 35 · 조건달성 28% · 사기NPC에 당함 · 패널티 4회</div>
+          <div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:28%;background:linear-gradient(90deg,#7B1FA2,#4A148C);"></div></div></div>
+        </div>
+        <div class="rank-score-col">
+          <div class="rank-score rs-normal">35</div>
+          <div class="rank-grade">⚠️ C등급</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY DETAIL -->
+    <div class="my-result-card">
+
+      <!-- Score breakdown -->
+      <div class="my-score-card">
+        <div class="msc-title">나의 점수 분석</div>
+        <div class="msc-body">
+          <div class="msc-ring">
+            <svg width="100" height="100" viewBox="0 0 100 100" class="ring">
+              <defs>
+                <linearGradient id="rgrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#1565C0"/>
+                  <stop offset="100%" style="stop-color:#42A5F5"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="50" cy="50" r="40"/>
+              <circle class="ring-fill" cx="50" cy="50" r="40"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-num">78</div>
+              <div class="ring-max">/ 100</div>
+            </div>
+          </div>
+          <div class="msc-breakdown">
+            <div class="mbd-title">항목별 점수</div>
+            <div class="mbd-row">
+              <span class="mbd-label">서류 검토</span>
+              <div class="mbd-bar-bg"><div class="mbd-bar-fill" style="width:85%;background:linear-gradient(90deg,#1565C0,#42A5F5);"></div></div>
+              <span class="mbd-val">85</span>
+            </div>
+            <div class="mbd-row">
+              <span class="mbd-label">전세가율</span>
+              <div class="mbd-bar-bg"><div class="mbd-bar-fill" style="width:82%;background:linear-gradient(90deg,#2E7D32,#66BB6A);"></div></div>
+              <span class="mbd-val">82</span>
+            </div>
+            <div class="mbd-row">
+              <span class="mbd-label">협상 결과</span>
+              <div class="mbd-bar-bg"><div class="mbd-bar-fill" style="width:60%;background:linear-gradient(90deg,#E65100,#FF9800);"></div></div>
+              <span class="mbd-val">60</span>
+            </div>
+            <div class="mbd-row">
+              <span class="mbd-label">보증보험</span>
+              <div class="mbd-bar-bg"><div class="mbd-bar-fill" style="width:80%;background:linear-gradient(90deg,#6A1B9A,#AB47BC);"></div></div>
+              <span class="mbd-val">80</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Condition achievements -->
+      <div class="cond-card">
+        <div class="cc-title">🎯 랜덤 조건 달성 결과</div>
+        <div class="cc-grid">
+          <div class="cc-item ok">
+            <span class="cc-icon">✅</span>
+            <div class="cc-info"><div class="cc-name">위치 조건 달성</div><div class="cc-sub">은평구 계약 완료</div></div>
+            <div class="cc-pts green">+10</div>
+          </div>
+          <div class="cc-item ok">
+            <span class="cc-icon">✅</span>
+            <div class="cc-info"><div class="cc-name">예산 조건 달성</div><div class="cc-sub">1.2억 이하 계약</div></div>
+            <div class="cc-pts green">+15</div>
+          </div>
+          <div class="cc-item ok">
+            <span class="cc-icon">✅</span>
+            <div class="cc-info"><div class="cc-name">전세가율 75% 이하</div><div class="cc-sub">63.4% 달성</div></div>
+            <div class="cc-pts green">+20</div>
+          </div>
+          <div class="cc-item ok">
+            <span class="cc-icon">✅</span>
+            <div class="cc-info"><div class="cc-name">사기 NPC 탐지</div><div class="cc-sub">매물 C 신고 성공</div></div>
+            <div class="cc-pts green">+20</div>
+          </div>
+          <div class="cc-item partial">
+            <span class="cc-icon">⚠️</span>
+            <div class="cc-info"><div class="cc-name">특약사항 미완료</div><div class="cc-sub">협상 시간 초과</div></div>
+            <div class="cc-pts orange">+5</div>
+          </div>
+          <div class="cc-item no">
+            <span class="cc-icon">❌</span>
+            <div class="cc-info"><div class="cc-name">D-5 이내 계약</div><div class="cc-sub">D-7에 계약 완료</div></div>
+            <div class="cc-pts red">-8</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-row">
+    <div class="learn-card">
+      <div class="lc-title">📖 이번 게임 학습 포인트</div>
+      <div class="lc-items">
+        <div class="lc-item">전세가율 80% 초과 시 깡통전세 위험 — 반드시 확인!</div>
+        <div class="lc-item">근저당+보증금 합산이 매매가를 초과하면 경매 시 보증금 미회수</div>
+        <div class="lc-item">HUG·SGI 전세보증보험 가입 가능 여부를 계약 전 먼저 확인</div>
+        <div class="lc-item">사기 NPC는 서류를 꼼꼼히 보면 탐지 가능 — 시간 투자 가치 있음</div>
+      </div>
+    </div>
+    <div class="btn-area">
+      <button class="result-btn rb-next" onclick="location.href='screen1_map.html'">➡️ 다음 라운드</button>
+      <button class="result-btn rb-retry" onclick="location.href='screen1_map.html'">🔄 같은 조건 재도전</button>
+      <button class="result-btn rb-home" onclick="location.href='index.html'">🏠 타이틀로</button>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

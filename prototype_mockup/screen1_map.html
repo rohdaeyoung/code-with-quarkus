@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>전세안전 - 매물 탐색 맵</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1280px;height:720px;overflow:hidden;font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:#1a1a2e;}
+canvas{display:block;}
+
+/* ── TOP HUD ── */
+.hud{position:absolute;top:0;left:0;right:0;height:52px;z-index:100;
+  background:linear-gradient(180deg,rgba(10,20,50,0.97),rgba(5,12,35,0.94));
+  border-bottom:2px solid rgba(80,140,255,0.3);
+  display:flex;align-items:center;gap:0;}
+
+.hud-logo{padding:0 16px;color:#e8f0ff;font-size:17px;font-weight:bold;
+  border-right:1px solid rgba(255,255,255,0.12);white-space:nowrap;}
+
+.hud-pills{display:flex;gap:6px;padding:0 12px;flex:1;}
+.pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  border-radius:16px;padding:4px 12px;color:white;font-size:12px;
+  display:flex;align-items:center;gap:5px;}
+.pill-icon{font-size:15px;}
+.pill-val{font-weight:bold;}
+.pill-val.gold{color:#FFD700;}
+.pill-val.orange{color:#FF9800;}
+.pill-val.red{color:#FF5252;}
+.pill-val.green{color:#69F0AE;}
+
+.hud-day{padding:0 16px;display:flex;gap:4px;align-items:center;}
+.day-box{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:bold;}
+.day-done{background:#2E7D32;color:#A5D6A7;}
+.day-now{background:#E65100;color:white;box-shadow:0 0 8px rgba(255,100,0,0.6);}
+.day-left{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.3);}
+.day-warn{background:#B71C1C;color:#FFCDD2;}
+
+.hud-timer{padding:0 16px;border-left:1px solid rgba(255,255,255,0.12);}
+.timer-badge{background:linear-gradient(135deg,#c62828,#8b0000);
+  border-radius:16px;padding:5px 16px;color:white;font-size:14px;font-weight:bold;
+  box-shadow:0 3px 10px rgba(200,0,0,0.5);display:flex;align-items:center;gap:6px;}
+
+/* ── LEFT PANEL ── */
+.left-panel{position:absolute;top:52px;left:0;width:256px;bottom:56px;z-index:80;
+  background:rgba(8,14,40,0.88);border-right:2px solid rgba(80,140,255,0.2);
+  display:flex;flex-direction:column;overflow:hidden;}
+
+.panel-section{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.panel-title{font-size:10px;font-weight:bold;color:rgba(120,180,255,0.7);
+  letter-spacing:2px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.panel-title::before{content:'';width:3px;height:10px;background:#4a90d9;border-radius:2px;display:block;}
+
+/* Conditions */
+.condition-box{background:rgba(255,200,50,0.08);border:1px solid rgba(255,200,50,0.25);
+  border-radius:8px;padding:8px 10px;margin-bottom:5px;}
+.cond-label{font-size:10px;color:rgba(255,200,50,0.7);margin-bottom:4px;font-weight:bold;}
+.cond-value{font-size:13px;color:#FFD700;font-weight:bold;}
+.cond-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+/* Stage progress */
+.stage-list{display:flex;flex-direction:column;gap:4px;}
+.stage-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;
+  border:1px solid transparent;}
+.stage-item.done{background:rgba(46,125,50,0.15);border-color:rgba(76,175,80,0.25);}
+.stage-item.active{background:rgba(230,81,0,0.2);border-color:rgba(255,152,0,0.5);
+  box-shadow:0 0 10px rgba(255,100,0,0.15);}
+.stage-item.pending{background:rgba(255,255,255,0.03);}
+.stage-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:bold;flex-shrink:0;}
+.snum-done{background:#2E7D32;color:#A5D6A7;}
+.snum-active{background:#E65100;color:white;}
+.snum-pending{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);}
+.stage-info{flex:1;}
+.stage-name{font-size:11px;color:rgba(255,255,255,0.8);font-weight:bold;}
+.stage-time{font-size:10px;color:rgba(255,255,255,0.35);}
+.stage-time.orange{color:#FF9800;}
+.stage-time.red{color:#FF5252;animation:blink 0.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.stage-status{font-size:11px;}
+
+/* Property popup */
+.prop-popup{position:absolute;top:52px;left:256px;width:210px;z-index:90;
+  background:rgba(8,14,40,0.96);border:2px solid rgba(80,140,255,0.35);
+  border-radius:0 0 12px 0;overflow:hidden;
+  box-shadow:4px 4px 20px rgba(0,0,0,0.5);}
+.popup-header{padding:8px 12px;font-size:13px;font-weight:bold;
+  display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.popup-body{padding:10px 12px;}
+.popup-row{display:flex;justify-content:space-between;margin-bottom:5px;align-items:center;}
+.p-key{font-size:11px;color:rgba(255,255,255,0.45);}
+.p-val{font-size:11px;font-weight:bold;color:rgba(255,255,255,0.9);}
+.p-val.red{color:#FF5252;} .p-val.orange{color:#FF9800;} .p-val.green{color:#69F0AE;}
+.popup-alert{background:rgba(255,82,82,0.15);border:1px solid rgba(255,82,82,0.35);
+  border-radius:6px;padding:6px 8px;margin:6px 0;font-size:10px;color:#FF8A80;line-height:1.5;}
+.popup-btn{width:100%;padding:7px;border-radius:7px;border:none;
+  background:linear-gradient(90deg,#1565C0,#0D47A1);
+  color:white;font-size:11px;font-weight:bold;cursor:pointer;font-family:inherit;
+  margin-top:4px;letter-spacing:0.5px;}
+.popup-btn:hover{background:linear-gradient(90deg,#1976D2,#1565C0);}
+
+/* ── RIGHT PANEL ── */
+.right-panel{position:absolute;top:52px;right:0;width:220px;bottom:56px;z-index:80;
+  background:rgba(8,14,40,0.88);border-left:2px solid rgba(80,140,255,0.2);
+  display:flex;flex-direction:column;}
+
+/* Multiplayer standings */
+.player-card{display:flex;align-items:center;gap:8px;padding:9px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.15s;}
+.player-card:hover,.player-card.me{background:rgba(255,255,255,0.06);}
+.player-card.me{border-left:3px solid #4a90d9;}
+.player-avatar{width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.player-info{flex:1;}
+.player-name{font-size:11px;font-weight:bold;color:rgba(255,255,255,0.85);}
+.player-status{font-size:10px;color:rgba(255,255,255,0.35);}
+.player-score{text-align:right;}
+.pscore-val{font-size:13px;font-weight:bold;color:#FFD700;}
+.pscore-stage{font-size:10px;color:rgba(255,255,255,0.3);}
+
+/* Score bars */
+.score-bar-bg{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:3px;}
+.score-bar-fill{height:100%;border-radius:2px;}
+
+/* Penalty log */
+.penalty-item{display:flex;align-items:flex-start;gap:6px;padding:6px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.04);}
+.penalty-icon{font-size:14px;flex-shrink:0;}
+.penalty-text{font-size:10px;color:rgba(255,100,100,0.8);line-height:1.5;}
+.penalty-time{font-size:9px;color:rgba(255,255,255,0.2);}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{position:absolute;bottom:0;left:0;right:0;height:56px;z-index:100;
+  background:rgba(5,10,30,0.96);border-top:2px solid rgba(80,140,255,0.2);
+  display:flex;align-items:center;padding:0 16px;gap:12px;}
+.stage-progress{flex:1;display:flex;align-items:center;gap:10px;}
+.prog-label{color:rgba(255,255,255,0.5);font-size:11px;white-space:nowrap;}
+.prog-track{flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px;
+  overflow:hidden;border:1px solid rgba(255,255,255,0.08);}
+.prog-fill{height:100%;border-radius:5px;
+  background:linear-gradient(90deg,#1565C0,#FF9800,#F44336);width:42%;}
+.prog-pct{color:white;font-size:12px;font-weight:bold;white-space:nowrap;}
+.b-actions{display:flex;gap:6px;}
+.b-btn{padding:6px 14px;border-radius:10px;border:1px solid;
+  font-size:12px;font-weight:bold;cursor:pointer;font-family:inherit;}
+.b-btn-map{background:rgba(21,101,192,0.3);border-color:rgba(33,150,243,0.5);color:#90CAF9;}
+.b-btn-check{background:rgba(46,125,50,0.3);border-color:rgba(76,175,80,0.5);color:#A5D6A7;}
+.b-btn-warn{background:rgba(198,40,40,0.3);border-color:rgba(244,67,54,0.5);color:#EF9A9A;animation:blink 1s infinite;}
+.b-hint{color:rgba(255,255,255,0.3);font-size:11px;}
+
+/* Random condition badge */
+.rcond-badge{position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:200;
+  background:linear-gradient(135deg,rgba(20,30,70,0.98),rgba(10,18,50,0.98));
+  border:2px solid rgba(255,200,50,0.5);border-radius:14px;
+  padding:10px 20px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+.rcond-icon{font-size:22px;}
+.rcond-text{font-size:12px;color:rgba(255,200,50,0.9);font-weight:bold;}
+.rcond-val{font-size:15px;color:#FFD700;font-weight:bold;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- CANVAS: Isometric City Map -->
+<canvas id="map" width="1280" height="720" style="position:absolute;top:0;left:0;z-index:1;"></canvas>
+
+<!-- ══ TOP HUD ══ -->
+<div class="hud">
+  <div class="hud-logo">🏠 전세안전 프로젝트</div>
+  <div class="hud-pills">
+    <div class="pill"><span class="pill-icon">💰</span><span class="pill-val gold">예산 1억 5천만원</span></div>
+    <div class="pill"><span class="pill-icon">🎯</span><span class="pill-val orange">조건 달성 62%</span></div>
+    <div class="pill"><span class="pill-icon">👁️</span><span class="pill-val">탐색 3/7</span></div>
+    <div class="pill"><span class="pill-icon">⚡</span><span class="pill-val green">AP 3/5</span></div>
+    <div class="pill"><span class="pill-icon">👥</span><span class="pill-val">4인 대전</span></div>
+  </div>
+  <div class="hud-day">
+    <div class="day-box day-done">D1</div>
+    <div class="day-box day-done">D2</div>
+    <div class="day-box day-done">D3</div>
+    <div class="day-box day-now">D4</div>
+    <div class="day-box day-left">D5</div>
+    <div class="day-box day-left">D6</div>
+    <div class="day-box day-warn">D7</div>
+  </div>
+  <div class="hud-timer">
+    <div class="timer-badge">⏰ 4일 12시간 남음</div>
+  </div>
+</div>
+
+<!-- ══ LEFT PANEL ══ -->
+<div class="left-panel">
+  <div class="panel-section">
+    <div class="panel-title">나의 랜덤 조건</div>
+    <div class="condition-box">
+      <div class="cond-label">📍 위치 조건</div>
+      <div class="cond-value">서울 은평구 / 마포구</div>
+      <div class="cond-sub">반경 3km 이내</div>
+    </div>
+    <div class="condition-box">
+      <div class="cond-label">💰 보증금 한도</div>
+      <div class="cond-value">1억 2천만원 이하</div>
+      <div class="cond-sub">현재 예산: 1억 5천만원</div>
+    </div>
+    <div class="condition-box">
+      <div class="cond-label">🏠 주거 조건</div>
+      <div class="cond-value">전용 20㎡ 이상 · 2층+</div>
+      <div class="cond-sub">주거용 건물 한정</div>
+    </div>
+    <div class="condition-box" style="background:rgba(255,82,82,0.1);border-color:rgba(255,82,82,0.3);">
+      <div class="cond-label" style="color:rgba(255,130,130,0.8);">⚠️ 특수 조건</div>
+      <div class="cond-value" style="color:#FF7043;">전세가율 75% 이하만 계약</div>
+      <div class="cond-sub">위반 시 자동 계약 실패</div>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-title">계약 단계</div>
+    <div class="stage-list">
+      <div class="stage-item done">
+        <div class="stage-num snum-done">✓</div>
+        <div class="stage-info"><div class="stage-name">매물 탐색</div><div class="stage-time">D1~D2 완료</div></div>
+        <span class="stage-status">✅</span>
+      </div>
+      <div class="stage-item done">
+        <div class="stage-num snum-done">✓</div>
+        <div class="stage-info"><div class="stage-name">서류 검토</div><div class="stage-time">D2~D3 완료</div></div>
+        <span class="stage-status">✅</span>
+      </div>
+      <div class="stage-item active">
+        <div class="stage-num snum-active">3</div>
+        <div class="stage-info"><div class="stage-name">임대인 면담</div><div class="stage-time orange">D4 진행 중</div></div>
+        <span class="stage-status">▶️</span>
+      </div>
+      <div class="stage-item pending">
+        <div class="stage-num snum-pending">4</div>
+        <div class="stage-info"><div class="stage-name">협상·특약</div><div class="stage-time">D5 예정</div></div>
+        <span class="stage-status" style="color:rgba(255,255,255,0.2);">○</span>
+      </div>
+      <div class="stage-item pending">
+        <div class="stage-num snum-pending">5</div>
+        <div class="stage-info"><div class="stage-name">최종 계약</div><div class="stage-time">D6~D7 예정</div></div>
+        <span class="stage-status" style="color:rgba(255,255,255,0.2);">○</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-section" style="flex:1;overflow-y:auto;">
+    <div class="panel-title">불이익 기록</div>
+    <div class="penalty-item">
+      <span class="penalty-icon">⚡</span>
+      <div><div class="penalty-text">D2 서류 검토 시간 초과<br>→ AP -1 패널티 적용</div>
+      <div class="penalty-time">어제 14:32</div></div>
+    </div>
+    <div class="penalty-item">
+      <span class="penalty-icon">💸</span>
+      <div><div class="penalty-text">매물 E 근저당 미확인<br>→ 컨설팅 비용 50만원 차감</div>
+      <div class="penalty-time">어제 17:10</div></div>
+    </div>
+    <div class="penalty-item" style="background:rgba(255,200,0,0.05);">
+      <span class="penalty-icon">⚠️</span>
+      <div><div class="penalty-text" style="color:rgba(255,200,100,0.8);">매물 C 사기 NPC 식별 성공!<br>→ 보너스 점수 +20</div>
+      <div class="penalty-time">오늘 09:15</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROPERTY POPUP ══ -->
+<div class="prop-popup">
+  <div class="popup-header" style="background:rgba(255,140,0,0.12);color:#FFB74D;">
+    <span>⚠️</span> 매물 B — 녹번동 다세대
+  </div>
+  <div class="popup-body">
+    <div class="popup-row"><span class="p-key">보증금</span><span class="p-val orange">1억 2천만원</span></div>
+    <div class="popup-row"><span class="p-key">전용면적</span><span class="p-val">33㎡ (10평)</span></div>
+    <div class="popup-row"><span class="p-key">전세가율</span><span class="p-val red">82.7% ⚠️</span></div>
+    <div class="popup-row"><span class="p-key">근저당</span><span class="p-val red">7천만원 설정</span></div>
+    <div class="popup-row"><span class="p-key">조건 적합도</span><span class="p-val orange">위치 ✓ / 가격 △</span></div>
+    <div class="popup-alert">⚠️ 전세가율 75% 초과!<br>랜덤 조건 위반 — 계약 불가</div>
+    <button class="popup-btn" onclick="location.href='screen2_docs.html'">📋 서류 검토 진입</button>
+  </div>
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="right-panel">
+  <div class="panel-section">
+    <div class="panel-title">멀티플레이 현황</div>
+  </div>
+
+  <!-- Player 1: Me -->
+  <div class="player-card me">
+    <div class="player-avatar" style="background:linear-gradient(135deg,#1565C0,#0D47A1);">🧑‍💼</div>
+    <div class="player-info">
+      <div class="player-name">나 (플레이어)</div>
+      <div class="player-status">임대인 면담 중...</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:62%;background:#1976D2;"></div></div>
+    </div>
+    <div class="player-score"><div class="pscore-val">62</div><div class="pscore-stage">3단계</div></div>
+  </div>
+
+  <!-- Player 2: AI -->
+  <div class="player-card">
+    <div class="player-avatar" style="background:linear-gradient(135deg,#388E3C,#1B5E20);">🤖</div>
+    <div class="player-info">
+      <div class="player-name">AI 플레이어 1</div>
+      <div class="player-status">서류 검토 완료</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:78%;background:#388E3C;"></div></div>
+    </div>
+    <div class="player-score"><div class="pscore-val" style="color:#69F0AE;">78</div><div class="pscore-stage">3단계</div></div>
+  </div>
+
+  <!-- Player 3: Human -->
+  <div class="player-card">
+    <div class="player-avatar" style="background:linear-gradient(135deg,#F57F17,#E65100);">👩‍💼</div>
+    <div class="player-info">
+      <div class="player-name">이민지 (온라인)</div>
+      <div class="player-status">매물 탐색 중</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:45%;background:#F57F17;"></div></div>
+    </div>
+    <div class="player-score"><div class="pscore-val" style="color:#FFD54F;">45</div><div class="pscore-stage">2단계</div></div>
+  </div>
+
+  <!-- Player 4: AI -->
+  <div class="player-card">
+    <div class="player-avatar" style="background:linear-gradient(135deg,#7B1FA2,#4A148C);">🤖</div>
+    <div class="player-info">
+      <div class="player-name">AI 플레이어 2</div>
+      <div class="player-status">불이익 패널티 적용</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="width:31%;background:#7B1FA2;"></div></div>
+    </div>
+    <div class="player-score"><div class="pscore-val" style="color:#CE93D8;">31</div><div class="pscore-stage">⚠️패널티</div></div>
+  </div>
+
+  <div class="panel-section" style="margin-top:auto;">
+    <div class="panel-title">시간 초과 패널티 (랜덤)</div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div style="font-size:10px;color:rgba(255,150,150,0.7);padding:4px 6px;background:rgba(255,50,50,0.08);border-radius:5px;border-left:2px solid #c62828;">💸 컨설팅 비용 50만원</div>
+      <div style="font-size:10px;color:rgba(255,150,150,0.7);padding:4px 6px;background:rgba(255,50,50,0.08);border-radius:5px;border-left:2px solid #c62828;">⚡ 행동력(AP) -1</div>
+      <div style="font-size:10px;color:rgba(255,150,150,0.7);padding:4px 6px;background:rgba(255,50,50,0.08);border-radius:5px;border-left:2px solid #c62828;">🏠 우선 매물 무작위 제거</div>
+      <div style="font-size:10px;color:rgba(255,150,150,0.7);padding:4px 6px;background:rgba(255,50,50,0.08);border-radius:5px;border-left:2px solid #c62828;">📉 조건 점수 -10점</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM BAR ══ -->
+<div class="bottom-bar">
+  <div class="stage-progress">
+    <span class="prog-label">오늘 진행률 (D4)</span>
+    <div class="prog-track"><div class="prog-fill"></div></div>
+    <span class="prog-pct">42%</span>
+  </div>
+  <div class="b-actions">
+    <button class="b-btn b-btn-map">🗺️ 전체 맵</button>
+    <button class="b-btn b-btn-check" onclick="location.href='screen2_docs.html'">📋 서류 검토</button>
+    <button class="b-btn b-btn-warn">🚨 사기 신고</button>
+  </div>
+  <span class="b-hint">매물 클릭 → 상세정보 | 우클릭 → 행동 메뉴</span>
+</div>
+
+<script>
+const canvas = document.getElementById('map');
+const ctx = canvas.getContext('2d');
+
+// Isometric config
+const TW = 72, TH = 36;
+const OX = 500, OY = 90; // offset so map is centered between panels
+const COLS = 18, ROWS = 14;
+
+// Color palette
+const C = {
+  grass: ['#5aad2e','#62b832','#56a82a','#4ea326'],
+  road: '#c8a46a',
+  roadEdge: '#a8844a',
+  roadLine: '#f0dc6e',
+  sidewalk: '#d4c4a0',
+  park: '#48a020',
+  water: '#2980b9',
+};
+
+// Map grid: 0=grass, 1=road, 2=sidewalk, 3=park, 4=water
+const grid = [
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,3,3,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,3,3,1,0,0,0,0,0,1,0,3,3,0,0,1,0],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,0,0,1,0,0,0,4,4,1,0,0,0,0,0,1,0],
+  [0,0,0,0,1,0,0,0,4,4,1,0,0,0,0,0,1,0],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,3,3,0,1,0],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,3,3,0,1,0],
+  [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0],
+];
+
+function toIso(col, row) {
+  return {
+    x: OX + (col - row) * (TW / 2),
+    y: OY + (col + row) * (TH / 2)
+  };
+}
+
+function drawTile(col, row, color, darker) {
+  const {x, y} = toIso(col, row);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + TW/2, y + TH/2);
+  ctx.lineTo(x + TW, y);
+  ctx.lineTo(x + TW/2, y - TH/2);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  if (darker) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+}
+
+function drawRoadTile(col, row) {
+  const {x, y} = toIso(col, row);
+  // Road base
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + TW/2, y + TH/2);
+  ctx.lineTo(x + TW, y);
+  ctx.lineTo(x + TW/2, y - TH/2);
+  ctx.closePath();
+  ctx.fillStyle = C.road;
+  ctx.fill();
+}
+
+function drawParkTile(col, row) {
+  const {x, y} = toIso(col, row);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + TW/2, y + TH/2);
+  ctx.lineTo(x + TW, y);
+  ctx.lineTo(x + TW/2, y - TH/2);
+  ctx.closePath();
+  ctx.fillStyle = C.park;
+  ctx.fill();
+}
+
+function drawWaterTile(col, row) {
+  const {x, y} = toIso(col, row);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + TW/2, y + TH/2);
+  ctx.lineTo(x + TW, y);
+  ctx.lineTo(x + TW/2, y - TH/2);
+  ctx.closePath();
+  ctx.fillStyle = '#1a6ea0';
+  ctx.fill();
+  // water shimmer
+  ctx.fillStyle = 'rgba(100,200,255,0.15)';
+  ctx.fill();
+}
+
+// ── BUILDINGS ──
+// bldType: 'tall','mid','house','shop','flat'
+// Colors: top, front, side
+const bldDefs = {
+  tall_blue: { w:1.4, h:4.5, top:'#90CAF9', front:'#1976D2', side:'#1565C0' },
+  tall_purple: { w:1.4, h:5.2, top:'#CE93D8', front:'#8E24AA', side:'#6A1B9A' },
+  tall_green: { w:1.2, h:3.8, top:'#A5D6A7', front:'#388E3C', side:'#2E7D32' },
+  tall_orange: { w:1.4, h:4.0, top:'#FFCC80', front:'#EF6C00', side:'#E65100' },
+  mid_teal:   { w:1.8, h:2.5, top:'#80DEEA', front:'#00838F', side:'#006064' },
+  mid_red:    { w:1.6, h:2.8, top:'#FFAB91', front:'#D84315', side:'#BF360C' },
+  mid_yellow: { w:1.6, h:2.4, top:'#FFF59D', front:'#F9A825', side:'#F57F17' },
+  house_pink: { w:1.4, h:1.8, top:'#F48FB1', front:'#E91E63', side:'#C2185B', roof:true },
+  house_mint: { w:1.4, h:1.6, top:'#B2DFDB', front:'#26A69A', side:'#00796B', roof:true },
+  shop_a:     { w:2.0, h:1.4, top:'#B0BEC5', front:'#546E7A', side:'#455A64' },
+  church:     { w:1.2, h:2.2, top:'#F5F5F5', front:'#ECEFF1', side:'#CFD8DC' },
+  villa_a:    { w:1.6, h:2.0, top:'#DCEDC8', front:'#8BC34A', side:'#689F38' },
+};
+
+const bldPlacements = [
+  // col, row, type
+  {c:0,r:0,t:'tall_blue'},
+  {c:1,r:0,t:'mid_red'},
+  {c:2,r:0,t:'house_pink'},
+  {c:0,r:1,t:'mid_yellow'},
+  {c:2,r:1,t:'villa_a'},
+  {c:0,r:2,t:'shop_a'},
+  // block after road col4
+  {c:5,r:0,t:'tall_purple'},
+  {c:6,r:0,t:'house_mint'},
+  {c:7,r:0,t:'mid_teal'},
+  {c:5,r:1,t:'shop_a'},
+  {c:6,r:1,t:'villa_a'},
+  {c:7,r:2,t:'mid_red'},
+  {c:5,r:2,t:'house_pink'},
+  // block after road col10
+  {c:11,r:0,t:'tall_green'},
+  {c:12,r:0,t:'tall_orange'},
+  {c:14,r:0,t:'mid_yellow'},
+  {c:11,r:1,t:'house_mint'},
+  {c:12,r:2,t:'shop_a'},
+  {c:14,r:1,t:'villa_a'},
+  // after road row 4
+  {c:0,r:5,t:'house_mint'},
+  {c:1,r:5,t:'villa_a'},
+  {c:2,r:5,t:'house_pink'},
+  {c:0,r:6,t:'mid_teal'},
+  {c:2,r:6,t:'mid_red'},
+  {c:5,r:5,t:'tall_blue'},
+  {c:6,r:5,t:'house_pink'},
+  {c:7,r:5,t:'shop_a'},
+  {c:5,r:6,t:'villa_a'},
+  {c:6,r:7,t:'house_mint'},
+  {c:11,r:5,t:'tall_orange'},
+  {c:12,r:5,t:'house_pink'},
+  {c:13,r:5,t:'villa_a'},
+  {c:11,r:6,t:'mid_yellow'},
+  {c:14,r:5,t:'church'},
+  // after row 9
+  {c:0,r:10,t:'house_mint'},
+  {c:1,r:10,t:'house_pink'},
+  {c:2,r:10,t:'villa_a'},
+  {c:0,r:11,t:'shop_a'},
+  {c:5,r:10,t:'tall_purple'},
+  {c:6,r:10,t:'mid_red'},
+  {c:7,r:10,t:'house_pink'},
+  {c:5,r:11,t:'villa_a'},
+  {c:11,r:10,t:'tall_blue'},
+  {c:12,r:10,t:'house_mint'},
+  {c:13,r:10,t:'shop_a'},
+  {c:11,r:11,t:'mid_teal'},
+];
+
+function drawBuilding(col, row, def) {
+  const {x, y} = toIso(col, row);
+  const W = TW * def.w;
+  const H = TH * def.h;
+  const hw = W / 2;
+  const qh = TH * def.w / 2;
+
+  // Right side face
+  ctx.beginPath();
+  ctx.moveTo(x + hw, y - qh);
+  ctx.lineTo(x + W, y);
+  ctx.lineTo(x + W, y - H);
+  ctx.lineTo(x + hw, y - qh - H);
+  ctx.closePath();
+  ctx.fillStyle = def.side;
+  ctx.fill();
+
+  // Front face (left)
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + hw, y + qh);
+  ctx.lineTo(x + hw, y + qh - H);
+  ctx.lineTo(x, y - H);
+  ctx.closePath();
+  ctx.fillStyle = def.front;
+  ctx.fill();
+
+  // Top face
+  ctx.beginPath();
+  ctx.moveTo(x, y - H);
+  ctx.lineTo(x + hw, y - qh - H);
+  ctx.lineTo(x + W, y - H);
+  ctx.lineTo(x + hw, y + qh - H);
+  ctx.closePath();
+  ctx.fillStyle = def.top;
+  ctx.fill();
+
+  // Roof triangle if house
+  if (def.roof) {
+    const apex = { x: x + hw, y: y - H - TH * 1.1 };
+    // Front slope
+    ctx.beginPath();
+    ctx.moveTo(x, y - H);
+    ctx.lineTo(x + hw, y + qh - H);
+    ctx.lineTo(apex.x + hw/2, apex.y + qh/2);
+    ctx.lineTo(apex.x - hw/2 + hw, apex.y - qh/2 + qh/2);
+    ctx.closePath();
+    ctx.fillStyle = shadeColor(def.side, -20);
+    ctx.fill();
+    // Right slope
+    ctx.beginPath();
+    ctx.moveTo(x + hw, y - qh - H);
+    ctx.lineTo(x + W, y - H);
+    ctx.lineTo(apex.x + hw/2, apex.y + qh/2);
+    ctx.closePath();
+    ctx.fillStyle = shadeColor(def.side, -35);
+    ctx.fill();
+  }
+
+  // Windows (simple dots on front face)
+  const wRows = Math.floor(def.h * 1.5);
+  const wCols = Math.max(2, Math.floor(def.w * 2));
+  for (let wr = 1; wr <= wRows; wr++) {
+    for (let wc = 0; wc < wCols; wc++) {
+      const wx = x + (wc + 0.5) * (hw / (wCols)) - 4;
+      const wy = y - wr * (H / (wRows + 1)) - 2;
+      const lit = Math.random() > 0.3;
+      ctx.fillStyle = lit ? 'rgba(255,255,200,0.85)' : 'rgba(30,30,60,0.6)';
+      ctx.fillRect(wx - hw * 0.02, wy, hw * 0.12, TH * 0.25);
+    }
+  }
+}
+
+function shadeColor(hex, pct) {
+  const num = parseInt(hex.replace('#',''),16);
+  const r = Math.min(255,Math.max(0,(num>>16)+pct));
+  const g = Math.min(255,Math.max(0,((num>>8)&0xff)+pct));
+  const b = Math.min(255,Math.max(0,(num&0xff)+pct));
+  return `rgb(${r},${g},${b})`;
+}
+
+// ── TREES ──
+function drawTree(col, row, big) {
+  const {x, y} = toIso(col, row);
+  const sz = big ? 28 : 20;
+  const h = big ? 50 : 36;
+
+  // Shadow
+  ctx.beginPath();
+  ctx.ellipse(x + TW/2, y + 4, sz * 0.7, sz * 0.25, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.fill();
+
+  // Trunk
+  ctx.fillStyle = '#5D4037';
+  ctx.fillRect(x + TW/2 - 3, y - h * 0.3, 6, h * 0.3 + 2);
+
+  // Foliage layers (dark green like reference image)
+  const greens = ['#2d7a1f','#357a22','#2a6e1a','#1e5c13'];
+  for (let i = 0; i < 3; i++) {
+    const off = i * (sz * 0.25);
+    ctx.beginPath();
+    ctx.arc(x + TW/2, y - h * 0.3 - off, sz * (1 - i*0.18), 0, Math.PI * 2);
+    ctx.fillStyle = greens[i % greens.length];
+    ctx.fill();
+    // highlight
+    ctx.beginPath();
+    ctx.arc(x + TW/2 - sz*0.2, y - h * 0.3 - off - sz*0.1, sz * 0.28 * (1 - i*0.18), 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(100,200,60,0.25)';
+    ctx.fill();
+  }
+}
+
+// Property pins
+const pins = [
+  {c:1.5, r:0.5, type:'safe',   label:'매물 A', price:'9천만원'},
+  {c:5.5, r:1.2, type:'warn',   label:'매물 B', price:'1억2천'},
+  {c:7.5, r:2.5, type:'danger', label:'매물 C', price:'1억5천'},
+  {c:12.5,r:0.5, type:'safe',   label:'매물 D', price:'1억원'},
+  {c:1.5, r:5.5, type:'visited',label:'매물 E', price:'8천만원'},
+  {c:6.5, r:6.5, type:'warn',   label:'매물 F', price:'1억1천'},
+  {c:12.5,r:5.5, type:'safe',   label:'매물 G', price:'8.5천'},
+];
+
+function drawPin(col, row, type, label) {
+  const {x, y} = toIso(col, row);
+  const px = x + TW/2, py = y;
+
+  const colors = {
+    safe:'#2E7D32', warn:'#E65100', danger:'#C62828', visited:'#757575'
+  };
+  const bg = {
+    safe:'#4CAF50', warn:'#FF9800', danger:'#F44336', visited:'#9E9E9E'
+  };
+
+  // Drop shadow
+  ctx.beginPath();
+  ctx.ellipse(px, py + 4, 10, 4, 0, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fill();
+
+  // Pin body
+  ctx.save();
+  ctx.translate(px, py - 32);
+  ctx.beginPath();
+  ctx.arc(0, 0, 14, 0, Math.PI*2);
+  ctx.fillStyle = bg[type];
+  ctx.fill();
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Icon
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const icons = {safe:'🏠', warn:'⚠️', danger:'🚨', visited:'✓'};
+  ctx.font = '12px Arial';
+  ctx.fillText(type === 'visited' ? '✓' : (type === 'danger' ? '!' : '▲'), 0, 0);
+  ctx.restore();
+
+  // Pointer tail
+  ctx.beginPath();
+  ctx.moveTo(px - 6, py - 18);
+  ctx.lineTo(px + 6, py - 18);
+  ctx.lineTo(px, py - 2);
+  ctx.closePath();
+  ctx.fillStyle = bg[type];
+  ctx.fill();
+
+  // Label bubble
+  const lw = ctx.measureText(label).width + 16;
+  ctx.fillStyle = 'rgba(5,12,35,0.92)';
+  roundRect(ctx, px - lw/2, py - 64, lw, 18, 6);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, px - lw/2, py - 64, lw, 18, 6);
+  ctx.stroke();
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 10px Malgun Gothic';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, px, py - 55);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+// Tree placements
+const treePlaces = [
+  {c:2.6,r:2.3,big:true},{c:3.4,r:2.7,big:false},{c:2.2,r:3.1,big:true},
+  {c:6.5,r:3.2,big:true},{c:7.2,r:3.6,big:false},
+  {c:11.8,r:2.5,big:true},{c:12.3,r:3.1,big:false},
+  {c:0.5,r:7.5,big:false},{c:1.2,r:8.1,big:true},
+  {c:8.3,r:8.5,big:true},{c:8.8,r:7.8,big:false},
+  {c:11.4,r:7.2,big:true},{c:12.1,r:7.8,big:false},{c:13.5,r:7.5,big:true},
+  {c:5.8,r:8.2,big:false},{c:3.5,r:10.5,big:true},{c:3.1,r:11.2,big:false},
+  {c:8.5,r:11.5,big:true},{c:9.2,r:10.8,big:false},
+  {c:14.3,r:11.2,big:true},{c:15.1,r:12.1,big:false},
+];
+
+// Player character
+function drawPlayerChar(col, row) {
+  const {x, y} = toIso(col, row);
+  const px = x + TW/2, py = y;
+  // Glow ring
+  ctx.beginPath();
+  ctx.arc(px, py + 2, 16, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(33,150,243,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(33,150,243,0.6)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Character emoji
+  ctx.font = '26px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('🚶', px, py + 4);
+}
+
+// ── DRAW EVERYTHING ──
+function draw() {
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, 250);
+  sky.addColorStop(0, '#1a4a7a');
+  sky.addColorStop(1, '#2d7abf');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 1280, 720);
+
+  // Subtle sky clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.ellipse(150 + i*230, 30 + (i%2)*25, 80+i*15, 22, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Ground plane background
+  const grd = ctx.createLinearGradient(0, 200, 0, 720);
+  grd.addColorStop(0, '#4a9a22');
+  grd.addColorStop(1, '#3a7a18');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 200, 1280, 520);
+
+  // Draw tiles (back to front for proper depth)
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const t = grid[r][c];
+      const gi = (c + r) % 4;
+      if (t === 0) drawTile(c, r, C.grass[gi], true);
+      else if (t === 1) drawRoadTile(c, r);
+      else if (t === 3) drawParkTile(c, r);
+      else if (t === 4) drawWaterTile(c, r);
+    }
+  }
+
+  // Road markings
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (grid[r][c] === 1) {
+        const {x, y} = toIso(c, r);
+        // Dashes
+        if (grid[r][c] === 1 && c > 0 && c < COLS-1) {
+          ctx.fillStyle = 'rgba(255,230,100,0.5)';
+          const mx = x + TW/2, my = y;
+          ctx.beginPath();
+          ctx.ellipse(mx, my, 3, 2, -0.5, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  // Sidewalks (edges of road tiles)
+  // (simplified - just slightly lighter border on road tiles)
+
+  // Draw trees (behind buildings)
+  treePlaces.filter(t => t.r < 4 || (t.r >= 5 && t.r < 9)).forEach(t => drawTree(t.c, t.r, t.big));
+
+  // Draw buildings (sorted back-to-front)
+  const sorted = [...bldPlacements].sort((a,b) => (a.c+a.r) - (b.c+b.r));
+  sorted.forEach(bp => {
+    if (bp.r < 9) drawBuilding(bp.c, bp.r, bldDefs[bp.t]);
+  });
+
+  // More trees (front)
+  treePlaces.filter(t => t.r >= 9).forEach(t => drawTree(t.c, t.r, t.big));
+  sorted.forEach(bp => {
+    if (bp.r >= 9) drawBuilding(bp.c, bp.r, bldDefs[bp.t]);
+  });
+
+  // Player character
+  drawPlayerChar(4.5, 3.5);
+
+  // Property pins (on top)
+  pins.forEach(p => drawPin(p.c, p.r, p.type, p.label));
+
+  // Vignette
+  const vig = ctx.createRadialGradient(640, 360, 200, 640, 360, 700);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, 1280, 720);
+}
+
+draw();
+
+// Subtle animation for water shimmer
+let t = 0;
+function animate() {
+  t++;
+  if (t % 40 === 0) {
+    // Redraw water tiles with shimmer
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (grid[r][c] === 4) {
+          const {x, y} = toIso(c, r);
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x+TW/2, y+TH/2);
+          ctx.lineTo(x+TW, y);
+          ctx.lineTo(x+TW/2, y-TH/2);
+          ctx.closePath();
+          ctx.fillStyle = `rgba(${80+Math.sin(t*0.05)*20},${160+Math.sin(t*0.05)*20},${220},${0.15+Math.sin(t*0.05)*0.05})`;
+          ctx.fill();
+        }
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

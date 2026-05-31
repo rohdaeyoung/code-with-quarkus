@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>전세안전 - 서류 검토</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:1280px; height:720px; overflow:hidden; font-family:'Malgun Gothic','맑은 고딕',sans-serif; }
+.scene {
+  width:1280px; height:720px;
+  background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 50%, #E8F5E9 100%);
+  display:flex; flex-direction:column;
+}
+
+/* Top HUD */
+.hud {
+  height:60px; background:linear-gradient(90deg,#1565C0,#6A1B9A);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+.back-btn {
+  background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.4);
+  color:white; padding:6px 16px; border-radius:20px; cursor:pointer;
+  font-family:inherit; font-size:13px; font-weight:bold;
+}
+.back-btn:hover { background:rgba(255,255,255,0.35); }
+.hud-center { color:white; font-size:17px; font-weight:bold; text-shadow:0 2px 4px rgba(0,0,0,0.2); }
+.hud-right { display:flex; gap:10px; align-items:center; }
+.score-badge {
+  background:linear-gradient(135deg,#FFD600,#FF8F00);
+  border-radius:20px; padding:6px 16px; color:white; font-weight:bold; font-size:15px;
+  box-shadow:0 3px 8px rgba(255,143,0,0.4);
+}
+.timer-badge {
+  background:linear-gradient(135deg,#F44336,#B71C1C);
+  border-radius:20px; padding:6px 14px; color:white; font-weight:bold; font-size:14px;
+  box-shadow:0 3px 8px rgba(244,67,54,0.4);
+}
+
+/* Main content */
+.main { display:flex; flex:1; gap:0; overflow:hidden; padding:12px; gap:12px; }
+
+/* Document panel */
+.doc-panel {
+  width:520px; flex-shrink:0;
+  background:white; border-radius:20px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.12);
+  display:flex; flex-direction:column; overflow:hidden;
+  border:2px solid rgba(255,255,255,0.9);
+}
+.doc-tabs {
+  display:flex; background:#F5F5F5; border-bottom:2px solid #E0E0E0; flex-shrink:0;
+}
+.doc-tab {
+  flex:1; padding:10px 4px; text-align:center; font-size:11px; cursor:pointer;
+  color:#9E9E9E; border-bottom:3px solid transparent; transition:all 0.2s;
+  font-weight:bold;
+}
+.doc-tab.active { color:#1565C0; border-bottom-color:#1565C0; background:white; }
+.doc-tab:hover { background:rgba(21,101,192,0.06); }
+
+.doc-content { flex:1; padding:18px 20px; overflow-y:auto; position:relative; }
+
+.doc-title-area { text-align:center; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid #F0F0F0; }
+.doc-main-title { font-size:16px; font-weight:bold; color:#333; margin-bottom:4px; }
+.doc-sub { font-size:11px; color:#9E9E9E; }
+
+.doc-section { margin-bottom:14px; }
+.doc-section-title {
+  font-size:11px; font-weight:bold; color:white; letter-spacing:1px;
+  background:linear-gradient(90deg,#1565C0,#1976D2);
+  padding:4px 12px; border-radius:4px; margin-bottom:8px; display:inline-block;
+}
+.doc-row { display:flex; justify-content:space-between; align-items:center; padding:4px 8px; border-radius:6px; margin-bottom:3px; background:#FAFAFA; }
+.doc-key { color:#757575; font-size:12px; }
+.doc-val { font-size:12px; font-weight:bold; color:#333; }
+.doc-val.red { color:#E53935; }
+.doc-val.orange { color:#F57C00; }
+.doc-val.green { color:#2E7D32; }
+
+.alert-box {
+  border-radius:10px; padding:10px 12px; margin:8px 0;
+  display:flex; align-items:flex-start; gap:10px;
+}
+.alert-danger { background:#FFEBEE; border:2px solid #FFCDD2; }
+.alert-success { background:#E8F5E9; border:2px solid #C8E6C9; }
+.alert-icon { font-size:18px; flex-shrink:0; }
+.alert-text { font-size:12px; line-height:1.6; }
+.alert-danger .alert-text { color:#C62828; }
+.alert-success .alert-text { color:#2E7D32; }
+
+/* Stamp */
+.doc-stamp {
+  position:absolute; top:50px; right:20px;
+  width:80px; height:80px; border-radius:50%;
+  border:5px solid rgba(244,67,54,0.6);
+  display:flex; align-items:center; justify-content:center;
+  transform:rotate(-18deg); opacity:0.75;
+  font-size:13px; font-weight:bold; color:rgba(244,67,54,0.85);
+  text-align:center; line-height:1.3; background:rgba(255,235,238,0.4);
+}
+
+/* Right area */
+.right-area { flex:1; display:flex; flex-direction:column; gap:12px; }
+
+/* Checklist card */
+.checklist-card {
+  flex:1; background:white; border-radius:20px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.1); overflow:hidden;
+  display:flex; flex-direction:column;
+  border:2px solid rgba(255,255,255,0.9);
+}
+.card-header {
+  background:linear-gradient(90deg,#43A047,#2E7D32);
+  padding:12px 18px; display:flex; justify-content:space-between; align-items:center;
+}
+.card-header-title { color:white; font-size:14px; font-weight:bold; }
+.card-progress-text { color:rgba(255,255,255,0.85); font-size:12px; }
+
+.card-body { flex:1; padding:12px 16px; overflow-y:auto; }
+
+.check-group { margin-bottom:12px; }
+.check-group-title {
+  font-size:11px; font-weight:bold; color:#757575; letter-spacing:1px;
+  margin-bottom:6px; display:flex; align-items:center; gap:6px;
+}
+.check-item {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:12px; margin-bottom:5px;
+  cursor:pointer; transition:all 0.15s;
+}
+.check-item.pass { background:#F1F8E9; border:1.5px solid #AED581; }
+.check-item.fail { background:#FFF3E0; border:1.5px solid #FFCC80; }
+.check-item.danger { background:#FFEBEE; border:1.5px solid #FFCDD2; }
+.check-item.pending { background:#FAFAFA; border:1.5px solid #E0E0E0; }
+.check-ico { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.ico-pass { background:#4CAF50; }
+.ico-fail { background:#FF9800; }
+.ico-danger { background:#F44336; }
+.ico-pending { background:#E0E0E0; }
+.check-main { font-size:12px; color:#424242; flex:1; font-weight:500; }
+.check-sub { font-size:10px; color:#9E9E9E; margin-top:1px; }
+.check-tag { font-size:10px; padding:2px 8px; border-radius:8px; font-weight:bold; white-space:nowrap; }
+.tag-pass{background:#E8F5E9;color:#2E7D32;}
+.tag-warn{background:#FFF3E0;color:#E65100;}
+.tag-danger{background:#FFEBEE;color:#C62828;}
+.tag-pending{background:#F5F5F5;color:#9E9E9E;}
+
+/* Safety gauge card */
+.gauge-card {
+  background:white; border-radius:20px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.1); padding:14px 18px;
+  border:2px solid rgba(255,255,255,0.9);
+}
+.gauge-title { font-size:13px; font-weight:bold; color:#333; margin-bottom:10px; }
+.gauge-bg { height:22px; background:#F5F5F5; border-radius:11px; overflow:hidden; border:2px solid #E0E0E0; position:relative; }
+.gauge-fill {
+  height:100%; border-radius:11px;
+  background:linear-gradient(90deg,#F44336 0%,#FF9800 40%,#FFEB3B 65%,#4CAF50 100%);
+  width:52%; position:relative;
+}
+.gauge-fill::after { content:'▶'; position:absolute; right:-8px; top:50%; transform:translateY(-50%); color:white; font-size:12px; }
+.gauge-labels { display:flex; justify-content:space-between; margin-top:5px; }
+.gauge-label { font-size:10px; color:#BDBDBD; }
+.gauge-score { text-align:center; margin-top:6px; font-size:22px; font-weight:bold; color:#FF8F00; }
+
+/* Bottom buttons */
+.btn-row { display:flex; gap:8px; }
+.action-btn {
+  flex:1; padding:11px; border-radius:14px; border:none; font-family:inherit;
+  font-size:13px; font-weight:bold; cursor:pointer; transition:all 0.15s;
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+.action-btn:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,0.2); }
+.btn-skip { background:linear-gradient(135deg,#EF5350,#B71C1C); color:white; }
+.btn-next { background:linear-gradient(135deg,#66BB6A,#2E7D32); color:white; }
+.btn-memo { background:linear-gradient(135deg,#42A5F5,#1565C0); color:white; }
+</style>
+</head>
+<body>
+<div class="scene">
+  <!-- HUD -->
+  <div class="hud">
+    <button class="back-btn" onclick="location.href='screen1_map.html'">◀ 맵으로</button>
+    <div class="hud-center">📄 서류 검토 — 매물 B (녹번동 다세대)</div>
+    <div class="hud-right">
+      <div class="score-badge">⭐ 안전도 52점</div>
+      <div class="timer-badge">⏰ D-4</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Document viewer -->
+    <div class="doc-panel">
+      <div class="doc-tabs">
+        <div class="doc-tab active">📋 등기부등본</div>
+        <div class="doc-tab">📑 건축물대장</div>
+        <div class="doc-tab">🔖 계약서</div>
+        <div class="doc-tab">🛡️ 보증보험</div>
+      </div>
+      <div class="doc-content">
+        <div class="doc-stamp">⚠️<br>이상<br>감지</div>
+        <div class="doc-title-area">
+          <div class="doc-main-title">부동산 등기사항 전부증명서</div>
+          <div class="doc-sub">서울시 은평구 녹번동 123-45 · 발급일 2025.05.28</div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">[ 표제부 ]</div>
+          <div class="doc-row"><span class="doc-key">소재지</span><span class="doc-val">서울 은평구 녹번동 123-45</span></div>
+          <div class="doc-row"><span class="doc-key">건물유형</span><span class="doc-val">다세대 3층</span></div>
+          <div class="doc-row"><span class="doc-key">전용면적</span><span class="doc-val">33㎡ (약 10평)</span></div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">[ 갑구 — 소유권 ]</div>
+          <div class="doc-row"><span class="doc-key">소유자</span><span class="doc-val">김○○</span></div>
+          <div class="doc-row"><span class="doc-key">취득일</span><span class="doc-val">2023.11.15</span></div>
+          <div class="doc-row"><span class="doc-key">매매가</span><span class="doc-val">1억 4,500만원</span></div>
+          <div class="alert-box alert-danger">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-text">전세가율 <strong>82.7%</strong> — 매매가 대비 전세금이 너무 높습니다! (안전 기준: 80% 미만)</span>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">[ 을구 — 근저당 ]</div>
+          <div class="doc-row"><span class="doc-key">근저당권자</span><span class="doc-val red">○○은행</span></div>
+          <div class="doc-row"><span class="doc-key">채권최고액</span><span class="doc-val red">7,000만원</span></div>
+          <div class="doc-row"><span class="doc-key">보증금+근저당</span><span class="doc-val red">1억 9,000만원</span></div>
+          <div class="alert-box alert-danger">
+            <span class="alert-icon">🚨</span>
+            <span class="alert-text">매매가(1억 4,500만원)를 <strong>4,500만원 초과!</strong> 경매 시 보증금 전액 회수 불가 위험</span>
+          </div>
+        </div>
+
+        <div class="alert-box alert-success">
+          <span class="alert-icon">✅</span>
+          <span class="alert-text">확정일자 정상 취득 확인 (2025.05.30)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right area -->
+    <div class="right-area">
+      <!-- Checklist -->
+      <div class="checklist-card">
+        <div class="card-header">
+          <span class="card-header-title">✅ 안전 체크리스트</span>
+          <span class="card-progress-text">5 / 10 완료</span>
+        </div>
+        <div class="card-body">
+          <div class="check-group">
+            <div class="check-group-title">🏠 매물 기본</div>
+            <div class="check-item pass">
+              <div class="check-ico ico-pass">✓</div>
+              <div style="flex:1;"><div class="check-main">등기부등본 최신 발급 (1개월 이내)</div><div class="check-sub">2025.05.28 확인</div></div>
+              <div class="check-tag tag-pass">통과</div>
+            </div>
+            <div class="check-item danger">
+              <div class="check-ico ico-danger">✕</div>
+              <div style="flex:1;"><div class="check-main">전세가율 80% 미만</div><div class="check-sub">현재 82.7% — 기준 초과</div></div>
+              <div class="check-tag tag-danger">위험</div>
+            </div>
+            <div class="check-item danger">
+              <div class="check-ico ico-danger">✕</div>
+              <div style="flex:1;"><div class="check-main">보증금+근저당 ≤ 매매가 80%</div><div class="check-sub">1억9천 > 1억1,600만원</div></div>
+              <div class="check-tag tag-danger">위험</div>
+            </div>
+          </div>
+          <div class="check-group">
+            <div class="check-group-title">📑 서류 검증</div>
+            <div class="check-item pass">
+              <div class="check-ico ico-pass">✓</div>
+              <div style="flex:1;"><div class="check-main">건축물대장 주거용 확인</div><div class="check-sub">근생시설 아님</div></div>
+              <div class="check-tag tag-pass">통과</div>
+            </div>
+            <div class="check-item pass">
+              <div class="check-ico ico-pass">✓</div>
+              <div style="flex:1;"><div class="check-main">확정일자 취득</div><div class="check-sub">2025.05.30</div></div>
+              <div class="check-tag tag-pass">통과</div>
+            </div>
+            <div class="check-item pending">
+              <div class="check-ico ico-pending">?</div>
+              <div style="flex:1;"><div class="check-main">전세보증보험 가입 가능</div><div class="check-sub">HUG / SGI 조회 필요</div></div>
+              <div class="check-tag tag-pending">미확인</div>
+            </div>
+          </div>
+          <div class="check-group">
+            <div class="check-group-title">👤 임대인</div>
+            <div class="check-item pass">
+              <div class="check-ico ico-pass">✓</div>
+              <div style="flex:1;"><div class="check-main">등기부 소유자 = 임대인 일치</div><div class="check-sub">김○○ 동일인</div></div>
+              <div class="check-tag tag-pass">통과</div>
+            </div>
+            <div class="check-item pending">
+              <div class="check-ico ico-pending">?</div>
+              <div style="flex:1;"><div class="check-main">국세·지방세 체납 없음</div><div class="check-sub">조회 필요</div></div>
+              <div class="check-tag tag-pending">미확인</div>
+            </div>
+            <div class="check-item pending">
+              <div class="check-ico ico-pending">?</div>
+              <div style="flex:1;"><div class="check-main">선순위 임차인 없음</div><div class="check-sub">확인 필요</div></div>
+              <div class="check-tag tag-pending">미확인</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gauge card -->
+      <div class="gauge-card">
+        <div class="gauge-title">🛡️ 계약 안전도</div>
+        <div class="gauge-bg"><div class="gauge-fill"></div></div>
+        <div class="gauge-labels"><span class="gauge-label">위험 0~40</span><span class="gauge-label">주의 40~70</span><span class="gauge-label">안전 70~100</span></div>
+        <div class="gauge-score">52점 — ⚠️ 주의 구간</div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="action-btn btn-memo">📌 메모</button>
+        <button class="action-btn btn-skip" onclick="location.href='screen1_map.html'">🚫 이 매물 제외</button>
+        <button class="action-btn btn-next" onclick="location.href='screen3_negotiate.html'">➡️ 협상 진행</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

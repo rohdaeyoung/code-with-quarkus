@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>전세안전 - 계약 안전도 분석</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1280px;height:720px;overflow:hidden;font-family:'Malgun Gothic','맑은 고딕',sans-serif;}
+
+.scene{
+  width:1280px;height:720px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%, #0d2347 0%, #060e24 70%);
+}
+
+/* Ambient glow */
+.glow-bg{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-55%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle, rgba(33,150,243,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* ── TOP BAR ── */
+.top-bar{
+  position:absolute;top:0;left:0;right:0;height:54px;z-index:50;
+  background:rgba(4,8,28,0.9);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+}
+.tb-left{display:flex;align-items:center;gap:14px;}
+.back-btn{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.6);padding:5px 14px;border-radius:20px;
+  cursor:pointer;font-family:inherit;font-size:12px;
+}
+.tb-title{color:rgba(255,255,255,0.85);font-size:15px;font-weight:bold;}
+.tb-prop{color:rgba(100,160,255,0.7);font-size:13px;}
+.tb-right{display:flex;gap:10px;align-items:center;}
+.tb-chip{
+  padding:5px 14px;border-radius:20px;font-size:12px;font-weight:bold;
+  border:1px solid;
+}
+.chip-timer{background:rgba(244,67,54,0.15);border-color:rgba(244,67,54,0.4);color:#EF9A9A;}
+.chip-day{background:rgba(255,152,0,0.15);border-color:rgba(255,152,0,0.4);color:#FFB74D;}
+
+/* ── MAIN ── */
+.main{
+  position:absolute;top:54px;left:0;right:0;bottom:64px;
+  display:flex;align-items:center;justify-content:center;
+  gap:0;
+}
+
+/* LEFT SCORES */
+.left-scores{
+  width:280px;display:flex;flex-direction:column;gap:12px;padding:0 0 0 28px;
+}
+.score-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:14px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  transition:all 0.2s;
+}
+.score-item:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.15);}
+.si-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;
+}
+.si-info{flex:1;}
+.si-name{font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:5px;}
+.si-bar-bg{height:7px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;}
+.si-bar-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+.si-nums{display:flex;justify-content:space-between;margin-top:4px;}
+.si-val{font-size:13px;font-weight:bold;}
+.si-weight{font-size:10px;color:rgba(255,255,255,0.25);}
+
+/* CENTER GAUGE */
+.center-gauge{
+  width:420px;display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;
+}
+
+.gauge-title{
+  color:rgba(255,255,255,0.45);font-size:12px;letter-spacing:3px;
+  margin-bottom:24px;
+}
+
+/* SVG Ring */
+.ring-wrap{position:relative;width:280px;height:280px;}
+.ring-wrap svg{position:absolute;top:0;left:0;}
+.ring-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.ring-num{font-size:72px;font-weight:bold;line-height:1;}
+.ring-max{font-size:14px;color:rgba(255,255,255,0.3);margin-top:2px;}
+.ring-label{font-size:13px;font-weight:bold;margin-top:6px;}
+
+/* Grade badge */
+.grade-badge{
+  margin-top:22px;padding:8px 32px;border-radius:24px;
+  font-size:18px;font-weight:bold;letter-spacing:1px;
+  border:2px solid;
+}
+
+/* Formula callout */
+.formula-callout{
+  margin-top:18px;background:rgba(0,0,0,0.3);
+  border:1px solid rgba(80,140,255,0.2);border-radius:10px;
+  padding:8px 16px;text-align:center;
+}
+.fc-text{font-size:11px;color:rgba(100,160,255,0.6);font-family:monospace;line-height:1.7;}
+.fc-text span{color:rgba(140,200,255,0.8);}
+
+/* RIGHT ALERTS */
+.right-alerts{
+  width:280px;display:flex;flex-direction:column;gap:12px;padding:0 28px 0 0;
+}
+
+.alert-card{
+  border-radius:14px;padding:14px 16px;
+  border:1px solid;
+}
+.alert-card.danger{
+  background:rgba(244,67,54,0.08);border-color:rgba(244,67,54,0.3);
+  animation:alertPulse 2s ease-in-out infinite;
+}
+@keyframes alertPulse{
+  0%,100%{border-color:rgba(244,67,54,0.3);}
+  50%{border-color:rgba(244,67,54,0.7);box-shadow:0 0 16px rgba(244,67,54,0.2);}
+}
+.alert-card.warn{background:rgba(255,152,0,0.07);border-color:rgba(255,152,0,0.25);}
+.alert-card.ok{background:rgba(76,175,80,0.07);border-color:rgba(76,175,80,0.25);}
+
+.ac-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ac-icon{font-size:20px;}
+.ac-title{font-size:13px;font-weight:bold;}
+.ac-title.red{color:#EF9A9A;} .ac-title.orange{color:#FFB74D;} .ac-title.green{color:#A5D6A7;}
+.ac-body{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.7;}
+.ac-body strong{color:rgba(255,255,255,0.75);}
+.ac-tag{
+  display:inline-block;font-size:10px;padding:2px 8px;border-radius:6px;
+  margin-top:6px;font-weight:bold;
+}
+.tag-red{background:rgba(244,67,54,0.2);color:#FF5252;}
+.tag-green{background:rgba(76,175,80,0.2);color:#69F0AE;}
+.tag-orange{background:rgba(255,152,0,0.2);color:#FFB74D;}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{
+  position:absolute;bottom:0;left:0;right:0;height:64px;z-index:50;
+  background:rgba(4,8,28,0.95);border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:0 28px;
+}
+.b-hint{color:rgba(255,255,255,0.2);font-size:12px;flex:1;}
+.next-btn{
+  padding:13px 52px;border-radius:16px;border:none;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:bold;
+  background:linear-gradient(135deg,#1976D2,#0D47A1);color:white;
+  box-shadow:0 4px 20px rgba(25,118,210,0.5);
+  transition:all 0.18s;letter-spacing:0.5px;
+}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(25,118,210,0.6);}
+.back-btn2{
+  padding:13px 28px;border-radius:16px;border:1px solid rgba(255,255,255,0.15);
+  cursor:pointer;font-family:inherit;font-size:14px;font-weight:bold;
+  background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);transition:all 0.18s;
+}
+.back-btn2:hover{background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.75);}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="glow-bg"></div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="tb-left">
+    <button class="back-btn" onclick="location.href='screen2_docs.html'">◀ 서류 검토</button>
+    <div class="tb-title">⚖️ 계약 안전도 분석</div>
+    <div class="tb-prop">📍 매물 A — 불광동 오피스텔</div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-chip chip-day">📅 D-5</div>
+    <div class="tb-chip chip-timer">⏰ 36시간 남음</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: 4 score items -->
+  <div class="left-scores">
+    <div class="score-item">
+      <div class="si-icon" style="background:rgba(25,118,210,0.2);">📋</div>
+      <div class="si-info">
+        <div class="si-name">서류 검토 · 가중치 40%</div>
+        <div class="si-bar-bg"><div class="si-bar-fill" style="width:85%;background:linear-gradient(90deg,#1976D2,#42A5F5);"></div></div>
+        <div class="si-nums"><span class="si-val" style="color:#64B5F6;">85점</span><span class="si-weight">×0.40 = 34.0</span></div>
+      </div>
+    </div>
+    <div class="score-item">
+      <div class="si-icon" style="background:rgba(46,125,50,0.2);">📊</div>
+      <div class="si-info">
+        <div class="si-name">전세가율 안전 · 가중치 30%</div>
+        <div class="si-bar-bg"><div class="si-bar-fill" style="width:82%;background:linear-gradient(90deg,#2E7D32,#66BB6A);"></div></div>
+        <div class="si-nums"><span class="si-val" style="color:#81C784;">82점</span><span class="si-weight">×0.30 = 24.6</span></div>
+      </div>
+    </div>
+    <div class="score-item">
+      <div class="si-icon" style="background:rgba(230,81,0,0.2);">🤝</div>
+      <div class="si-info">
+        <div class="si-name">협상 결과 · 가중치 20%</div>
+        <div class="si-bar-bg"><div class="si-bar-fill" style="width:60%;background:linear-gradient(90deg,#E65100,#FF9800);"></div></div>
+        <div class="si-nums"><span class="si-val" style="color:#FFB74D;">60점</span><span class="si-weight">×0.20 = 12.0</span></div>
+      </div>
+    </div>
+    <div class="score-item">
+      <div class="si-icon" style="background:rgba(106,27,154,0.25);">🛡️</div>
+      <div class="si-info">
+        <div class="si-name">전세보증보험 · 가중치 10%</div>
+        <div class="si-bar-bg"><div class="si-bar-fill" style="width:80%;background:linear-gradient(90deg,#6A1B9A,#AB47BC);"></div></div>
+        <div class="si-nums"><span class="si-val" style="color:#CE93D8;">80점</span><span class="si-weight">×0.10 = 8.0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Big ring gauge -->
+  <div class="center-gauge">
+    <div class="gauge-title">계약 안전도</div>
+    <div class="ring-wrap">
+      <svg width="280" height="280" viewBox="0 0 280 280">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1565C0"/>
+            <stop offset="50%" stop-color="#FF9800"/>
+            <stop offset="100%" stop-color="#43A047"/>
+          </linearGradient>
+          <!-- Glow filter -->
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Track -->
+        <circle cx="140" cy="140" r="120" fill="none"
+          stroke="rgba(255,255,255,0.06)" stroke-width="18"/>
+        <!-- Fill: 78.6% of 2πr, starts at top (-90deg) -->
+        <!-- circumference = 2 * π * 120 ≈ 754.0 -->
+        <!-- offset = 754 * (1 - 0.786) = 754 * 0.214 = 161 -->
+        <circle cx="140" cy="140" r="120" fill="none"
+          stroke="url(#g1)" stroke-width="18"
+          stroke-linecap="round"
+          stroke-dasharray="754"
+          stroke-dashoffset="161"
+          transform="rotate(-90 140 140)"
+          filter="url(#glow)"/>
+        <!-- Tick marks -->
+        <circle cx="140" cy="26" r="5" fill="rgba(255,255,255,0.15)"/>
+        <circle cx="254" cy="140" r="5" fill="rgba(255,255,255,0.15)"/>
+        <circle cx="26" cy="140" r="5" fill="rgba(255,255,255,0.15)"/>
+        <!-- Safe zone marker -->
+        <circle cx="140" cy="26" r="4" fill="#43A047" opacity="0.6"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-num" style="color:#FFD700;text-shadow:0 0 30px rgba(255,215,0,0.4);">78.6</div>
+        <div class="ring-max">/ 100점</div>
+        <div class="ring-label" style="color:#A5D6A7;">✓ 안전 구간</div>
+      </div>
+    </div>
+
+    <div class="grade-badge" style="background:rgba(255,193,7,0.12);border-color:rgba(255,193,7,0.4);color:#FFD700;">
+      🏅 B+ 등급 — 계약 가능
+    </div>
+
+    <div class="formula-callout">
+      <div class="fc-text">
+        안전도 = <span>34.0</span> + <span>24.6</span> + <span>12.0</span> + <span>8.0</span> = <span style="color:#FFD700;font-size:13px;">78.6점</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Key alerts -->
+  <div class="right-alerts">
+    <div class="alert-card ok">
+      <div class="ac-top">
+        <span class="ac-icon">✅</span>
+        <span class="ac-title green">근저당 없음</span>
+      </div>
+      <div class="ac-body">등기부등본 확인 완료.<br>소유자·임대인 동일인 일치.</div>
+      <span class="ac-tag tag-green">+20점 획득</span>
+    </div>
+
+    <div class="alert-card ok">
+      <div class="ac-top">
+        <span class="ac-icon">📉</span>
+        <span class="ac-title green">전세가율 63.4%</span>
+      </div>
+      <div class="ac-body">랜덤 조건 <strong>75% 이하</strong> 달성.<br>HUG 전세보증보험 가입 가능.</div>
+      <span class="ac-tag tag-green">조건 충족</span>
+    </div>
+
+    <div class="alert-card warn">
+      <div class="ac-top">
+        <span class="ac-icon">⚠️</span>
+        <span class="ac-title orange">특약사항 미완료</span>
+      </div>
+      <div class="ac-body">협상 시간 부족으로<br>특약사항 추가 실패. <strong>-5점</strong> 적용.</div>
+      <span class="ac-tag tag-orange">보완 가능</span>
+    </div>
+
+    <div class="alert-card danger">
+      <div class="ac-top">
+        <span class="ac-icon">🚨</span>
+        <span class="ac-title red">사기 NPC 주의</span>
+      </div>
+      <div class="ac-body">근처 <strong>매물 C</strong>에서<br>사기 의심 신호 감지.<br>서류 미확인 시 계약 실패.</div>
+      <span class="ac-tag tag-red">즉시 신고 권장</span>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="b-hint">분석 완료 — 계약 결정 화면으로 진행하세요</div>
+  <button class="back-btn2">🚨 매물C 사기 신고</button>
+  <button class="next-btn" onclick="location.href='screen3b_decision.html'">계약 결정하기 →</button>
+</div>
+
+</div>
+</body>
+</html>
