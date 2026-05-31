@@ -27,4 +27,21 @@ window.onload = function () {
           "/uploads/profile/" + data.profileImage;
       }
     });
+
+  // URL 파라미터 오류 감지 → uploadErrorMsg div 표시
+  const params = new URLSearchParams(window.location.search);
+  const error  = params.get("error");
+
+  const errorDiv = document.getElementById("uploadErrorMsg");
+  if (error && errorDiv) {
+    let message = "";
+    if      (error === "invalid_type")  message = "jpg, png, gif, webp 파일만 가능합니다.";
+    else if (error === "too_large")     message = "파일 크기는 5MB 이하여야 합니다.";
+    else if (error === "upload_fail")   message = "업로드 실패. 다시 시도해주세요.";
+
+    if (message) {
+      errorDiv.textContent = message;
+      errorDiv.classList.remove("d-none"); // 숨김 해제 → 빨간 박스 표시
+    }
+  }
 };

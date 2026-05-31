@@ -40,3 +40,14 @@ function clearError(fieldId) {
     field.classList.add('is-valid');
   }
 }
+
+// 로그인 실패 시 URL의 error 파라미터 감지 → 오류 메시지 표시
+window.addEventListener('load', function () {
+  const params = new URLSearchParams(window.location.search);
+  const error  = params.get('error');
+
+  if (error === '1') {
+    // 패스워드 필드에 오류 표시 (아이디/패스워드 중 어느 쪽인지 모르므로 패스워드에 표시)
+    showError('passwordInput', 'passwordMsg', '아이디 또는 패스워드가 올바르지 않습니다.');
+  }
+});
