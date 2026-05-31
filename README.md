@@ -81,7 +81,7 @@ You can run your application in dev mode that enables live coding using:
 
 # 9주차 과제
 
-사진과 같이 검색 하였을 때 캐릭터가 나오고 상세버튼을 눌렀을 때 모달창이 뜨게끔 하였다.
+사진과 같이 검색 하였을 때 캐릭터가 나오고 상세버튼을 눌렀을 때 모달창이 나오게 하였다.
 ![alt text](image-10.png)
 ![alt text](image-11.png)
 ![alt text](image-12.png)
@@ -159,6 +159,32 @@ body.light-mode .accent-purple { color: #6a0dad; }
 5. 프로필 제작 초반부까지 나갔음(main_afer_login.html 로그아웃 코드 상단에 프로필 추가)
    ![alt text](image-17.png)
 
+# 12주차-1 과제(PDF제목: 회원가입, 암호화 과제)
+
+1. 아이디 유효성 검사 (4~20자 영문/숫자)
+   정규식: /^[a-zA-Z0-9]{4,20}$/
+
+2. 패스워드 유효성 검사 (8자 이상, 영문+숫자+특수문자)
+   정규식: /^(?=._[a-zA-Z])(?=._\d)(?=._[!@#$%^&_]).{8,}$/
+
+3. 두 항목 모두 통과 시 로그인 실행
+
+4. 요약
+   로그인 버튼 클릭
+   → validateAndLogin() 실행
+   ↓
+   ① 아이디 검사: 4~20자 영문/숫자 /^[a-zA-Z0-9]{4,20}$/
+         실패 → 빨간 테두리 + 오류 메시지 표시
+         성공 → 초록 테두리
+         ↓
+   ② 패스워드 검사: 8자+영문+숫자+특수문자  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&\*]).{8,}$/
+   실패 → 빨간 테두리 + 오류 메시지 표시
+   성공 → 초록 테두리
+   ↓
+   ③ 둘 다 통과 → submitLogin() → SHA-256 해시 후 서버 전송
+
+   ![alt text](image-20.png)
+
 # 12주차-2
 
 1. AuthorResource.java파일에서 profiled을 불러오도록 코드 추가.
@@ -169,3 +195,39 @@ body.light-mode .accent-purple { color: #6a0dad; }
 6. Bootstrap5 Toast는 화면 차단 없이 자동으로 사라지는 비방해형 알림
    ![alt text](image-18.png)
    ![alt text](image-19.png)
+
+# 12주차-2 과제(PDF제목: 회원관리 페이지 과제)
+
+1. 로그인 에러 처리 — login.js파일 수정(12주차-1 내용을 다른 파일에 수정)
+   사용자가 틀린 아이디/패스워드로 로그인 시도
+   ↓
+   서버(AuthResource.java)에서 DB 불일치 확인
+   ↓
+   Response.seeOther("/login?error=1") ← 서버가 URL에 error=1 붙여서 리다이렉트
+   ↓
+   브라우저가 /login?error=1 로 이동
+   ↓
+   window.addEventListener('load') 실행
+   ↓
+   URLSearchParams로 URL에서 error 값 추출
+   ↓
+   error === '1' → showError() 호출
+   ↓
+   패스워드 필드 빨간 테두리 + "아이디 또는 패스워드가 올바르지 않습니다." 표시
+
+2. 업로드 에러 처리 — profile.html, Profile.js 파일 수정
+   사용자가 잘못된 파일 업로드 시도
+   ↓
+   서버(AuthResource.java)에서 검사
+   - 확장자 불일치 → /profile?error=invalid_type
+   - 5MB 초과 → /profile?error=too_large
+   - 저장 실패 → /profile?error=upload_fail
+     ↓
+     브라우저가 /profile?error=xxx 로 이동
+     ↓
+     Profile.js의 URLSearchParams로 error 값 추출
+     ↓
+     uploadErrorMsg div의 d-none 클래스 제거 (숨김 해제)
+     ↓
+     빨간 박스에 메시지 표시
+     ![alt text](image-21.png)
