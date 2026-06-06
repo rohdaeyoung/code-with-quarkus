@@ -207,23 +207,6 @@ window.onload = function () {
 };
 ```
 
-# 6주차 과제
-
-1. search.js CHAMPIONS 배열에 신규 챔피언 데이터 7개 추가
-
-- 앰베사(Ambessa) / 스몰더(Smolder) / 나아피리(Naafiri) / 오로라(Aurora) 등 모든 캐릭터
-- 검색창에 이름 입력 시 정상 검색 및 카드 출력
-
-![alt text](image-23.png)
-![alt text](image-24.png)
-
-2. showMainScreen() 함수 구현 — 검색어가 없거나 공백일 경우 메인화면으로 복귀
-
-- performSearch()에서 검색어(q)가 없으면 showMainScreen() 호출
-- 메인화면 복귀 시 기존 section이 다시 보이도록 d-none 제거 및 searchResults 숨김
-
-![alt text](image-25.png)
-
 # 7주차 수업 내용
 
 1. 서치 폼을 만들어 캐릭터 검색을 하면 웹페이지에 들어가 있는 캐릭터 정보가 뜨게끔 만듦.
@@ -234,12 +217,27 @@ window.onload = function () {
 
 # 7주차 과제
 
-1. modal창 구현
+1. search.js CHAMPIONS 배열에 신규 챔피언 데이터 7개 추가
+
+- 앰베사(Ambessa) / 스몰더(Smolder) / 나아피리(Naafiri) / 오로라(Aurora) 등 모든 캐릭터
+- 검색창에 이름 입력 시 정상 검색 및 카드 출력
+
+![alt text](image-26.png)
+![alt text](image-27.png)
+
+2. showMainScreen() 함수 구현 — 검색어가 없거나 공백일 경우 메인화면으로 복귀
+
+- performSearch()에서 검색어(q)가 없으면 showMainScreen() 호출
+- 메인화면 복귀 시 기존 section이 다시 보이도록 d-none 제거 및 searchResults 숨김
+
+![alt text](image-25.png)
+
+3. modal창 구현
 
 ![alt text](image-8.png)
 ![alt text](image-9.png)
 
-2. 새로 추가했던 캐릭터들을 검색 후 상세 정보가 나오게 함. (수행 화면 3장)
+4. 새로 추가했던 캐릭터들을 검색 후 상세 정보가 나오게 함. (수행 화면 3장)
 
 ![alt text](image-5.png)
 ![alt text](image-6.png)
