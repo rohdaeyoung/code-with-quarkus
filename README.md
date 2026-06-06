@@ -221,8 +221,14 @@ window.onload = function () {
 
 - 앰베사(Ambessa) / 스몰더(Smolder) / 나아피리(Naafiri) / 오로라(Aurora) 등 모든 캐릭터
 - 검색창에 이름 입력 시 정상 검색 및 카드 출력
+- 카드 클릭 시 모달창으로 상세 정보 표시 (search.js `openChampionModal` → iframe 동적 생성 방식으로 수정)
+
+**앰베사 검색 결과**
 
 ![alt text](image-26.png)
+
+**스몰더 검색 결과**
+
 ![alt text](image-27.png)
 
 2. showMainScreen() 함수 구현 — 검색어가 없거나 공백일 경우 메인화면으로 복귀

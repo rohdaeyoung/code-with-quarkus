@@ -208,36 +208,45 @@ function switchCategory(type, el) {
     document.getElementById('resultNews').style.display = type === 'news' ? 'block' : 'none';
 }
 
-// ── 4. 모달 열기 함수 (중요: fetch 에러 처리 추가) ───────────────────────────
-async function openChampionModal(name) {
-    try {
-        const champion = CHAMPIONS.find(c => c.name === name);
-        if (!champion || !champion.modal) {
-            console.error("모달 경로가 없는 챔피언입니다.");
-            return;
-        }
-
-        const container = document.getElementById("modalContainer");
-        const response = await fetch(champion.modal);
-        
-        if(!response.ok) throw new Error("파일을 찾을 수 없습니다.");
-        
-        const html = await response.text();
-        container.innerHTML = html;
-
-        const modalElement = container.querySelector(".modal");
-        if (!modalElement) throw new Error("HTML 내에 .modal 클래스가 없습니다.");
-
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-
-        modalElement.addEventListener("hidden.bs.modal", () => {
-            container.innerHTML = "";
-        });
-    } catch (error) {
-        console.error("모달 로드 실패:", error);
-        alert("모달을 불러오는 데 실패했습니다. (파일 경로 등을 확인하세요)");
+// ── 4. 모달 열기 함수 (iframe 으로 챔피언 상세 HTML 동적 로드) ───────────────────────────
+function openChampionModal(name) {
+    const champion = CHAMPIONS.find(c => c.name === name);
+    if (!champion || !champion.modal) {
+        console.error("모달 경로가 없는 챔피언입니다.");
+        return;
     }
+
+    // 이전에 열었던 검색용 모달이 남아있으면 제거
+    const old = document.getElementById('searchChampionModal');
+    if (old) old.remove();
+
+    // iframe 으로 챔피언 상세 HTML(modals/*.html)을 불러오는 모달을 동적으로 생성
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div class="modal fade" id="searchChampionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title">${champion.name} (${champion.engName}) 상세 정보</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 65vh; background: #0a0e17;">
+              <iframe src="${champion.modal}" frameborder="0" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+            </div>
+            <div class="modal-footer border-secondary">
+              <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">닫기</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(wrapper.firstElementChild);
+
+    const modalElement = document.getElementById('searchChampionModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // 닫을 때 DOM 에서 제거 (중복 방지)
+    modalElement.addEventListener('hidden.bs.modal', () => modalElement.remove());
 }
 
 // ── 5. 이벤트 리스너 ────────────────────────────────────────────────
