@@ -68,52 +68,65 @@ You can run your application in dev mode that enables live coding using:
 - **3단계**: 커스텀 CSS 스타일링 — LOL 다크 테마 (`#0a0e17` 배경, `#a020f0` 포인트 컬러)
 - **4단계**: 인터랙티브 효과 — 마우스 호버 시 카드 확대(`scale(1.05)`), 보라색 광원 효과(`box-shadow`)
 
-# 4주차 수업 내용
+# 4주차 수업 내용 (HTML과 CSS 심화)
 
-1. Bootstrap 5 기본 활용
+1. **Bootstrap 5 기본 활용**
 
-- **Bootstrap 5 구성 이해** -태그 = HTML5 기본 태그 / 속성(class) = Bootstrap5 디자인
-  -Navbar 구조: navbar-expand-lg, navbar-dark, container-fluid, ms-auto
-  -Bootstrap5 해제(Ctrl+/) 로 태그 역할 확인 가능
-- **하이퍼 링크와 이미지**
-- <a href="주소" target="_blank"> : 링크, \_blank는 새 탭 열기
-- <img src="경로"> : 이미지, 외부 URL 또는 로컬 경로 사용
-- 상대 경로(./, ../) vs 절대 경로(http://, /)
-- CSS 선택자 우선순위
-- 선택자 예시 우선순위
-- 요소 div, p, img 낮음
-- 클래스 .card, .accent-purple 중간
-- ID #championGrid 높음
-- 결합 .card:hover 중간+
-- !important color: white !important 최고
+- 태그 = HTML5 기본 태그 / 속성(class) = Bootstrap5 디자인
+- Navbar 구조: `navbar-expand-lg`, `navbar-dark`, `container-fluid`, `ms-auto`
+- Bootstrap5 해제(Ctrl+/)로 태그 역할 확인 가능
 
-2. HTML/CSS 심화 실습
+2. **하이퍼 링크와 이미지**
+
+- `<a href="주소" target="_blank">` : 링크, `_blank`는 새 탭 열기
+- `<img src="경로">` : 이미지, 외부 URL 또는 로컬 경로 사용
+- 상대 경로(`./`, `../`) vs 절대 경로(`http://`, `/`)
+
+3. **CSS 선택자 우선순위**
+
+  | 선택자     | 예시                      | 우선순위 |
+  | ---------- | ------------------------- | -------- |
+  | 요소       | `div`, `p`, `img`         | 낮음     |
+  | 클래스     | `.card`, `.accent-purple` | 중간     |
+  | ID         | `#championGrid`           | 높음     |
+  | 결합       | `.card:hover`             | 중간+    |
+  | !important | `color: white !important` | 최고     |
+
+4. **HTML/CSS 심화 실습**
 
 - **네비게이션 바 수정**
-- Bootstrap5 공식 문서에서 드롭다운 메뉴 있는 네비바 복사 후 삽입
-- 메뉴명 한글로 수정, 드롭다운 메뉴와 외부 링크 추가
+  - Bootstrap5 공식 문서에서 드롭다운 메뉴 있는 네비바 복사 후 삽입
+  - 메뉴명 한글로 수정, 드롭다운 메뉴와 외부 링크 추가
+
 - **챔피언 카드 추가 (Bootstrap Grid)**
-- Bootstrap 반응형 그리드: col-md-_, col-lg-_, col-xl-\*
-- row-cols-auto: 화면 크기에 따라 자동으로 열 수 조정
-- 카드 구조: card-img-top + card-body + card-footer + 버튼
+  - Bootstrap 반응형 그리드: `col-md-*`, `col-lg-*`, `col-xl-*`
+  - `row-cols-auto`: 화면 크기에 따라 자동으로 열 수 조정
+  - 카드 구조: `card-img-top` + `card-body` + `card-footer` + 버튼
+
 - **카드 → 모달창 구현**
-- 버튼의 data-bs-target="#modalID" ↔ 모달의 id="modalID" 연결
-- 모달 body 안에 <iframe> 태그로 별도 HTML 파일 삽입
-- id vs class: id는 문서 내 고유 식별자, class는 여러 요소에 재사용
+  - 버튼의 `data-bs-target="#modalID"` ↔ 모달의 `id="modalID"` 연결
+  - 모달 body 안에 `<iframe>` 태그로 별도 HTML 파일 삽입
+  - id vs class: id는 문서 내 고유 식별자, class는 여러 요소에 재사용
+
 - **서브 페이지 추가**
-- main_page_sub/: download.html, champion.html, news.html 생성
-- login/login.html: 아이디, 패스워드 입력 폼
-- modals/Aatrox.html: iframe으로 모달에 삽입
+  - `main_page_sub/`: download.html, champion.html, news.html 생성
+  - `login/login.html`: 아이디, 패스워드 입력 폼
+  - `modals/Aatrox.html`: iframe으로 모달에 삽입
+
 - **CSS 파일 분리 (외부 CSS)**
-- resources/css/ 폴더 생성 → 외부 CSS 파일로 분리
-- HTML에서 연결: <link rel="stylesheet" href="../css/download.css">
-- CSS Flexbox 활용: display: flex, align-items: center, justify-content: center
-- **HTML 테이블 태그**
-- 태그 역할
-- <table>	표 전체
-- <thead> / <tbody>	헤더 / 본문 행 그룹
-- <tr>	행(row)
-- <th> / <td>	헤더 셀 / 데이터 셀
+  - `resources/css/` 폴더 생성 → 외부 CSS 파일로 분리
+  - HTML에서 연결: `<link rel="stylesheet" href="../css/download.css">`
+  - CSS Flexbox 활용: `display: flex`, `align-items: center`, `justify-content: center`
+
+5. **HTML 테이블 태그**
+
+  | 태그                  | 역할                |
+  | --------------------- | ------------------- |
+  | `<table>`             | 표 전체             |
+  | `<thead>` / `<tbody>` | 헤더 / 본문 행 그룹 |
+  | `<tr>`                | 행(row)             |
+  | `<th>` / `<td>`       | 헤더 셀 / 데이터 셀 |
+
 - F12 개발자 모드: Elements 탭에서 HTML/CSS 실시간 확인 및 수정 가능
 
 # 4주차 과제
@@ -123,9 +136,9 @@ You can run your application in dev mode that enables live coding using:
 3. 새로운 캐릭터들을 추가 후 아트록스와 같이 사진변경,상세설명 추가,모달 추가 후 배경 변경 하였다.
 4. Bootstrap을 활용하여 수정하였다.
 
-[alt text](4주차과제2.jpg)
-[alt text](<4주차 과제.jpg>)
-[alt text](image-22.png)
+![alt text](4주차과제2.jpg)
+![alt text](<4주차 과제.jpg>)
+![alt text](image-22.png)
 <img width="857" height="551" alt="image" src="https://github.com/user-attachments/assets/f88d85df-7688-41b6-8929-ff984ab201ae" />
 <img width="1091" height="297" alt="image" src="https://github.com/user-attachments/assets/f1a8abc4-7b89-4e21-8e92-fb9079093bd1" />
 
@@ -164,8 +177,8 @@ You can run your application in dev mode that enables live coding using:
 - HTML에서 연결: `<link rel="stylesheet" href="../css/download.css">`
 - 기존 `<style>` 태그는 삭제
 
-[alt text](image-2.png)
-[alt text](image-3.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
 
 # 6주차 수업 내용
 
@@ -214,21 +227,23 @@ window.onload = function () {
 # 7주차 수업 내용
 
 1. 서치 폼을 만들어 캐릭터 검색을 하면 웹페이지에 들어가 있는 캐릭터 정보가 뜨게끔 만듦.
-2. main.css파일을 css폴더에 넣은 후 index 파일에서 연결링크를 넣은 후 main.css 파일에서 아트록스를 관리 할 수 있게 해줌.
-3. 검색에서 없는 검색어는 그 검색어에 맞춰 그 검색어 출력 후 각 뉴스,캐릭터에 없다는 글을 뜨도록 설정을 하고 이벤트를 넣어 챔피언이 있는지 없는지 관리 할 수 있도록 하였다.
-   [alt text](image-4.png)
+2. main.css 파일을 css 폴더에 넣은 후 index 파일에서 연결링크를 넣은 후 main.css 파일에서 아트록스를 관리할 수 있게 해줌.
+3. 검색에서 없는 검색어는 그 검색어에 맞춰 출력 후 각 뉴스/캐릭터에 없다는 글을 뜨도록 설정하고, 이벤트를 넣어 챔피언이 있는지 없는지 관리할 수 있도록 하였다.
+
+![alt text](image-4.png)
 
 # 7주차 과제
 
-- modal창 구현
-  [alt text](image-8.png)
-  [alt text](image-9.png)
+1. modal창 구현
 
-- 새로 추가했던 캐릭터들을 검색 후 상세 정보가 나오게 함.
-- [수행한 내용중 이미지 3장]
-  [alt text](image-5.png)
-  [alt text](image-6.png)
-  [alt text](image-7.png)
+![alt text](image-8.png)
+![alt text](image-9.png)
+
+2. 새로 추가했던 캐릭터들을 검색 후 상세 정보가 나오게 함. (수행 화면 3장)
+
+![alt text](image-5.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
 
 <video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
 
@@ -316,9 +331,9 @@ quarkus.hibernate-orm.database.generation=update
 사진과 같이 검색 하였을 때 캐릭터가 나오고 상세버튼을 눌렀을 때 모달창이 나오게 하였다.
 (검색 결과 카드에 modalId 속성 추가 → Bootstrap 모달 열기)
 
-[alt text](image-10.png)
-[alt text](image-11.png)
-[alt text](image-12.png)
+![alt text](image-10.png)
+![alt text](image-11.png)
+![alt text](image-12.png)
 
 # 10주차 수업 내용 (로그인과 로그아웃)
 
@@ -371,7 +386,7 @@ quarkus.hibernate-orm.database.generation=update
 - 도메인 패키지 구조: 계층형보다 도메인형이 응집도 높고 충돌 최소화
 - HTTP 상태코드: 200(성공), 302(리다이렉트/POST유지), 303(리다이렉트/GET전환), 404(없음)
 
-[alt text](image-13.png)
+![alt text](image-13.png)
 
 # 10주차 과제
 
@@ -406,7 +421,7 @@ body.light-mode .accent-purple {
 }
 ```
 
-[alt text](image-14.png)
+![alt text](image-14.png)
 
 # 12주차 수업 내용 - 회원가입, 암호화
 
@@ -471,8 +486,8 @@ async function hashPassword(password) {
 - 전체 흐름: 로그인창에서 회원가입을 하여 로그인이 되기까지
 - DB에는 해시값만 저장 → 해킹되어도 패스워드 복구 불가
 
-[alt text](image-15.png)
-[alt text](image-16.png)
+![alt text](image-15.png)
+![alt text](image-16.png)
 
 # 12주차 과제 - 회원가입, 암호화
 
@@ -493,7 +508,7 @@ async function hashPassword(password) {
  ③ 둘 다 통과 → submitLogin() → SHA-256 해시 후 서버 전송
 ```
 
-[alt text](image-20.png)
+![alt text](image-20.png)
 
 # 12주차 수업 내용 - 회원관리 페이지 1 (로그인 암호화 체크 / 프로필)
 
@@ -543,29 +558,35 @@ async function hashPassword(password) {
 - /profile/info: 세션 체크 후 JSON 응답 (Profile.js가 fetch로 사용자 정보를 비동기 수신 → 화면 갱신)
 - /profile/upload: 확장자/크기(5MB) 검사 → UUID 파일명 생성 → upload/profile에 이미지 저장 → DB 업데이트
 
-[alt text](image-17.png)
+![alt text](image-17.png)
 
 # 12주차 과제 - 회원관리 페이지 1
 
-1. 로그인 에러 처리 — login.js 수정
-   사용자가 틀린 아이디/패스워드로 로그인 시도
-   → 서버(AuthResource.java)에서 DB 불일치 확인
-   → `Response.seeOther("/login?error=1")` 리다이렉트
-   → 브라우저가 /login?error=1 로 이동
-   → `window.addEventListener('load')` 실행
-   → URLSearchParams로 error 값 추출
-   → error === '1' → showError() 호출
-   → 패스워드 필드 빨간 테두리 + "아이디 또는 패스워드가 올바르지 않습니다." 표시
+1. **로그인 에러 처리** — login.js 수정
 
-2. 업로드 에러 처리 — profile.html, Profile.js 수정
-   사용자가 잘못된 파일 업로드 시도
-   → 서버에서 검사 (확장자 불일치 → invalid_type / 5MB 초과 → too_large / 저장 실패 → upload_fail)
-   → /profile?error=xxx 로 이동
-   → Profile.js의 URLSearchParams로 error 값 추출
-   → uploadErrorMsg div의 d-none 클래스 제거 (숨김 해제)
-   → 빨간 박스에 메시지 표시
+```
+사용자가 틀린 아이디/패스워드로 로그인 시도
+→ 서버(AuthResource.java)에서 DB 불일치 확인
+→ Response.seeOther("/login?error=1") 리다이렉트
+→ 브라우저가 /login?error=1 로 이동
+→ window.addEventListener('load') 실행
+→ URLSearchParams로 error 값 추출
+→ error === '1' → showError() 호출
+→ 패스워드 필드 빨간 테두리 + "아이디 또는 패스워드가 올바르지 않습니다." 표시
+```
 
-[alt text](image-21.png)
+2. **업로드 에러 처리** — profile.html, Profile.js 수정
+
+```
+사용자가 잘못된 파일 업로드 시도
+→ 서버에서 검사 (확장자 불일치 → invalid_type / 5MB 초과 → too_large / 저장 실패 → upload_fail)
+→ /profile?error=xxx 로 이동
+→ Profile.js의 URLSearchParams로 error 값 추출
+→ uploadErrorMsg div의 d-none 클래스 제거 (숨김 해제)
+→ 빨간 박스에 메시지 표시
+```
+
+![alt text](image-21.png)
 
 # 13주차 수업 내용 - 회원관리 페이지 2 (Toast, Tooltip)
 
@@ -620,5 +641,5 @@ function showToast(message, type = "success") {
 | data-bs-placement="bottom" | 말풍선 방향 (top/bottom/left/right)         |
 | new bootstrap.Tooltip(el)  | JS로 tooltip 초기화 (동적 title이므로 필수) |
 
-[alt text](image-18.png)
-[alt text](image-19.png)
+![alt text](image-18.png)
+![alt text](image-19.png)
