@@ -107,7 +107,11 @@ const CHAMPIONS = [
     { name: '아트록스', engName: 'Aatrox', role: '전사', lane: '탑', img: 'image/Atrox.jpg', difficulty: '상', modal: 'modals/Aatrox.html' },
     { name: '멜', engName: 'Mell', role: '마법사', lane: '미드', img: 'image2/Mell.jpg', difficulty: '중', modal: 'modals/Mell.html' },
     { name: '흐웨이', engName: 'Hwei', role: '탱커', lane: '서포트', img: 'image5/흐웨이.jpg', difficulty: '중', modal: 'modals/Hwei.html' },
-    { name: '잔나렘', engName: 'Janahrem', role: '탱커', lane: '서포트', img: 'image4/잔나렘.jpg', difficulty: '중', modal: 'modals/Janahrem.html' }
+    { name: '잔나렘', engName: 'Janahrem', role: '탱커', lane: '서포트', img: 'image4/잔나렘.jpg', difficulty: '중', modal: 'modals/Janahrem.html' },
+    { name: '앰베사', engName: 'Ambessa', role: '전사', lane: '탑/미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Ambessa.png', difficulty: '상', modal: 'modals/Ambessa.html' },
+    { name: '스몰더', engName: 'Smolder', role: '원거리딜러', lane: '원딜', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Smolder.png', difficulty: '중', modal: 'modals/Smolder.html' },
+    { name: '나아피리', engName: 'Naafiri', role: '암살자', lane: '미드', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Naafiri.png', difficulty: '하', modal: 'modals/Naafiri.html' },
+    { name: '오로라', engName: 'Aurora', role: '마법사', lane: '미드/탑', img: 'https://ddragon.leagueoflegends.com/cdn/15.24.1/img/champion/Aurora.png', difficulty: '중', modal: 'modals/Aurora.html' }
 ];
 
 const NEWS = [

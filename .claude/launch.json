@@ -4,8 +4,14 @@
     {
       "name": "prototype",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "7788", "--directory", "prototype_mockup"],
+      "runtimeArgs": ["-m", "http.server", "7788", "--directory", "game-mockup"],
       "port": 7788
+    },
+    {
+      "name": "lol-resources",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8090", "--directory", "src/main/resources/META-INF/resources"],
+      "port": 8090
     }
   ]
 }
