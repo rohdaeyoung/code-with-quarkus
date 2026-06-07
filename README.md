@@ -207,6 +207,43 @@ window.onload = function () {
 };
 ```
 
+# 6주차 과제
+
+1. **var / let / const 스코프 차이 실습 (test.js)**
+
+- `var`는 함수 스코프 → `if` 블록 밖에서도 접근 가능
+- `let` / `const`는 블록 스코프 → `{}` 밖에서 접근 시 ReferenceError 발생
+- `var`는 재선언·재할당 모두 가능 / `let`은 재할당만 가능 / `const`는 둘 다 불가
+
+```js
+// 스코프 차이
+if (true) {
+  var a = "var 변수";   // 블록 밖에서 접근 가능
+  let b = "let 변수";   // 블록 밖 접근 시 ReferenceError
+}
+
+// 재선언 & 재할당
+var x = 10;
+var x = 20; // 가능
+let y = 30;
+y = 40;     // 재할당 가능 (재선언 불가)
+const z = 50; // 재할당 불가
+```
+
+2. **호이스팅(Hoisting) 실습**
+
+- `var`는 선언 전 접근 시 `undefined` 출력 (선언만 끌어올림)
+- `let` / `const`는 TDZ(Temporal Dead Zone) 발생 → 선언 전 접근 시 ReferenceError
+- TDZ가 발생하면 그 이후 코드도 실행 중단됨
+
+3. **성능 측정 실습 (test2.js)**
+
+- 1,000,000개 데이터로 일반 배열 vs 객체 배열 탐색·가공 성능 비교
+- `console.time()` / `console.timeEnd()` 활용한 성능 측정
+- `indexOf` vs `find()` / `map()` 비교
+
+![alt text](image-1.png)
+
 # 7주차 수업 내용
 
 1. 서치 폼을 만들어 캐릭터 검색을 하면 웹페이지에 들어가 있는 캐릭터 정보가 뜨게끔 만듦.
@@ -681,3 +718,50 @@ function showToast(message, type = "success") {
 
 ![alt text](image-18.png)
 ![alt text](image-19.png)
+
+# 13주차 과제 - 회원관리 페이지 2
+
+1. **alert → Toast 교체** (test.js showToast 함수 활용)
+
+| 파일 | window.onload 처리 | onclick 처리 |
+| ---- | ------------------ | ------------ |
+| `main_index.html` | showToast('메인 페이지 로딩 완료') | showToast('즐거운 플레이 되세요') |
+| `login/main_after_login.html` | alert 삭제 (toast 없음) | showToast('즐거운 플레이 되세요') |
+| `login/login.html` | alert 삭제 | - |
+| `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
+
+- `test.js` 수정: 기존 JS 실습 코드 → showToast(message, type) 함수로 교체
+- 각 페이지 `</body>` 위에 Toast 컨테이너 HTML 추가
+- Toast type: `'success'`(초록) / `'danger'`(빨강) / `'warning'`(노랑)
+
+2. **회원정보 수정 구현**
+
+- `profile.html`: Bootstrap Collapse 기반 수정 폼 추가 (이메일, 연락처 입력)
+- `Profile.js`: `validateAndUpdate()` 함수 추가 (정규식 검사 후 제출)
+- `AuthResource.java`: `/profile/update` POST 엔드포인트 추가
+
+```
+수정 완료 클릭 → validateAndUpdate() 실행
+ ① 이메일 형식 검사 (/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+ ② 연락처 형식 검사 (/^010-\d{4}-\d{4}$/)
+ ③ 통과 시 /profile/update POST → DB 업데이트 → /profile?success=updated
+```
+
+3. **비밀번호 변경 구현**
+
+- `profile.html`: 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인, hidden 필드)
+- `Profile.js`: `validateAndChangePassword()` async 함수 추가 (SHA-256 해시 후 전송)
+- `AuthResource.java`: `/profile/password` POST 엔드포인트 추가
+- `/logout` 엔드포인트 수정: `?next=login` 파라미터 지원 → 비밀번호 변경 후 로그인 페이지로 이동
+
+```
+비밀번호 변경 클릭 → validateAndChangePassword() 실행
+ ① 현재 비밀번호 빈 값 체크
+ ② 새 비밀번호 정규식 검사 (8자+영문+숫자+특수문자)
+ ③ 새 비밀번호 확인 일치 여부 체크
+ ④ SHA-256 해시 생성 → hidden 필드 저장 → /profile/password POST 전송
+ ⑤ 성공 시 Toast 알림 → 3.5초 후 /logout?next=login → 로그인 페이지 이동
+```
+
+![alt text](image-30.png)
+![alt text](image-31.png)
