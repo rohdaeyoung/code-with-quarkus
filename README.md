@@ -690,50 +690,52 @@ async function hashPassword(password) {
 
 1. **alert → Toast 교체**
 
-- `test.js` 수정: 기존 JS 실습 코드 → `showToast(message, type)` 함수로 교체
-- 각 페이지 `</body>` 위에 Toast 컨테이너 HTML 추가
-- 로그인 성공 Toast 추가: `main_after_login.html` window.onload 에 showToast('로그인 성공!') 삽입
+- `js/test.js`: `showToast(message, type)` 함수 작성 (type: success/danger/warning)
+- `main_index.html`, `main_after_login.html`, `profile.html` 각 `</body>` 위에 Toast 컨테이너 HTML 추가
+- `main_after_login.html`: `window.addEventListener('load')` → `showToast('로그인 성공!', 'success')` 삽입
 
 ![alt text](image-31.png)
 
 2. **회원정보 수정 구현**
 
-- `profile.html`: Bootstrap Collapse 기반 수정 폼 추가 (이메일, 연락처)
-- `Profile.js`: `validateAndUpdate()` 함수 구현 (정규식 검사 후 폼 제출)
-- `AuthResource.java`: `/profile/update` POST 엔드포인트 추가
-
-```
-수정 완료 클릭 → validateAndUpdate()
- ① 이메일 정규식 검사 (/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
- ② 연락처 정규식 검사 (/^010-\d{4}-\d{4}$/)
- ③ 통과 → /profile/update POST → DB 업데이트
-```
+- `profile.html`: Bootstrap Collapse 버튼(`data-bs-toggle="collapse"` → `#updateFormArea`) + 이메일/연락처 폼
+- `Profile.js`: `validateAndUpdate()` — 정규식 검사 통과 시 `#updateForm.submit()`
+- `AuthResource.java`: `POST /profile/update` — DB 업데이트 후 `/profile?success=updated` 리다이렉트
+- 성공 시 폼 자동 펼침(`bootstrap.Collapse show:true`) + 성공 메시지 표시
 
 ![alt text](image-30.png)
 
 3. **비밀번호 변경 구현**
 
-- `profile.html`: 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인, hidden 필드)
-- `Profile.js`: `validateAndChangePassword()` async 함수 구현 (SHA-256 해시 후 전송)
-- `AuthResource.java`: `/profile/password` POST 엔드포인트 추가
-- `/logout` 수정: `?next=login` 파라미터 지원
-
-```
-비밀번호 변경 클릭 → validateAndChangePassword()
- ① 현재 비밀번호 빈 값 체크
- ② 새 비밀번호 정규식 검사 (8자+영문+숫자+특수문자)
- ③ 새 비밀번호 확인 일치 체크
- ④ SHA-256 해시 → hidden 필드 → /profile/password POST
- ⑤ 성공 → Toast → 3.5초 후 /logout?next=login
-```
+- `profile.html`: 현재PW / 새PW / 새PW확인 입력 + hidden 필드 2개 (`currentPassword`, `newPassword`)
+- `Profile.js`: `validateAndChangePassword()` async — 유효성 검사 → SHA-256 해시 → hidden 필드 저장 → `#pwForm.submit()`
+- `AuthResource.java`: `POST /profile/password` — 해시값 비교 후 성공 시 `/profile?success=password_changed`
+- `GET /logout`: `?next=login` 파라미터 지원 → `/login` 리다이렉트
+- 성공 → Toast 표시 → `setTimeout(3500ms)` → `/logout?next=login`
 
 ![alt text](image-33.png)
 ![alt text](image-32.png)
 
-4. **마무리 Final Check**
+---
 
-- 네비바 Disabled 항목 제거 (`main_index.html`, `main_after_login.html`)
-- 전체 페이지 검색창 동작 및 JS 로드 순서 확인
-- 네비게이션 바 링크 통일, 불필요한 항목 제거
-- 코드 주석처리 및 들여쓰기 정리
+# 13주차 마무리 Final Check
+
+코드와 HTML 연결까지 직접 검토한 결과:
+
+| 항목 | 파일 | 확인 결과 |
+|------|------|-----------|
+| 네비바 Disabled 항목 제거 | `main_index.html`, `main_after_login.html` | ✅ disabled 항목 없음 |
+| 검색창 동작 | `main_index.html`, `main_after_login.html` | ✅ `#searchForm` + `search.js` 로드 연결 |
+| Toast 컨테이너 | `main_index.html`, `main_after_login.html`, `profile.html` | ✅ 모든 페이지 `#liveToast` 존재 |
+| `test.js` JS 로드 순서 | `main_index.html`, `main_after_login.html` | ✅ `<head>`에서 `bootstrap.bundle.min.js` → `test.js` 순서 로드 |
+| 로그인 성공 Toast | `main_after_login.html` | ✅ `window.addEventListener('load')` → `showToast('로그인 성공!')` |
+| 네비바 Tooltip 초기화 | `main_after_login.html`, `profile.html` | ✅ `fetch('/profile/info')` 후 `new bootstrap.Tooltip(profileNavLink)` |
+| 회원정보 수정 Collapse 연결 | `profile.html` | ✅ 버튼 `data-bs-target="#updateFormArea"` ↔ `div#updateFormArea.collapse` |
+| `validateAndUpdate()` 정규식 | `Profile.js` | ✅ 이메일·연락처 정규식 검사 후 `updateForm.submit()` |
+| 비밀번호 SHA-256 해시 | `Profile.js` | ✅ `hashPassword()` → `currentPassword` / `newPassword` hidden 저장 |
+| `setTimeout` 자동 로그아웃 | `Profile.js` | ✅ `success=password_changed` 감지 → `setTimeout(3500)` → `/logout?next=login` |
+| `/logout?next=login` 처리 | `AuthResource.java` | ✅ `@QueryParam("next")` → `/login` 리다이렉트 |
+| 세션 분기 (로그인/비로그인) | `AuthResource.java` | ✅ `GET /` → 세션 있으면 `main_after_login.html`, 없으면 `main_index.html` |
+| 신규 챔피언 카드 4개 | `main_after_login.html` | ✅ 앰베사/스몰더/나아피리/오로라 카드 + modal (iframe `../modals/`) |
+| `register.html` alert 블록 | `register.html` | ✅ `window.onload alert` 블록 완전 삭제 |
 
