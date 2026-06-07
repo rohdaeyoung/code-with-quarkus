@@ -724,18 +724,18 @@ async function hashPassword(password) {
 
 | 항목 | 파일 | 확인 결과 |
 |------|------|-----------|
-| 네비바 Disabled 항목 제거 | `main_index.html`, `main_after_login.html` | ✅ disabled 항목 없음 |
-| 검색창 동작 | `main_index.html`, `main_after_login.html` | ✅ `#searchForm` + `search.js` 로드 연결 |
-| Toast 컨테이너 | `main_index.html`, `main_after_login.html`, `profile.html` | ✅ 모든 페이지 `#liveToast` 존재 |
-| `test.js` JS 로드 순서 | `main_index.html`, `main_after_login.html` | ✅ `<head>`에서 `bootstrap.bundle.min.js` → `test.js` 순서 로드 |
-| 로그인 성공 Toast | `main_after_login.html` | ✅ `window.addEventListener('load')` → `showToast('로그인 성공!')` |
-| 네비바 Tooltip 초기화 | `main_after_login.html`, `profile.html` | ✅ `fetch('/profile/info')` 후 `new bootstrap.Tooltip(profileNavLink)` |
-| 회원정보 수정 Collapse 연결 | `profile.html` | ✅ 버튼 `data-bs-target="#updateFormArea"` ↔ `div#updateFormArea.collapse` |
-| `validateAndUpdate()` 정규식 | `Profile.js` | ✅ 이메일·연락처 정규식 검사 후 `updateForm.submit()` |
-| 비밀번호 SHA-256 해시 | `Profile.js` | ✅ `hashPassword()` → `currentPassword` / `newPassword` hidden 저장 |
-| `setTimeout` 자동 로그아웃 | `Profile.js` | ✅ `success=password_changed` 감지 → `setTimeout(3500)` → `/logout?next=login` |
-| `/logout?next=login` 처리 | `AuthResource.java` | ✅ `@QueryParam("next")` → `/login` 리다이렉트 |
-| 세션 분기 (로그인/비로그인) | `AuthResource.java` | ✅ `GET /` → 세션 있으면 `main_after_login.html`, 없으면 `main_index.html` |
-| 신규 챔피언 카드 4개 | `main_after_login.html` | ✅ 앰베사/스몰더/나아피리/오로라 카드 + modal (iframe `../modals/`) |
-| `register.html` alert 블록 | `register.html` | ✅ `window.onload alert` 블록 완전 삭제 |
+| 네비바 Disabled 항목 제거 | `main_index.html`, `main_after_login.html` | disabled 항목 없음 |
+| 검색창 동작 | `main_index.html`, `main_after_login.html` | `#searchForm` + `search.js` 로드 연결 |
+| Toast 컨테이너 | `main_index.html`, `main_after_login.html`, `profile.html` | 모든 페이지 `#liveToast` 존재 |
+| `test.js` JS 로드 순서 | `main_index.html`, `main_after_login.html` | `<head>`에서 `bootstrap.bundle.min.js` → `test.js` 순서 로드 |
+| 로그인 성공 Toast | `main_after_login.html` | `window.addEventListener('load')` → `showToast('로그인 성공!')` |
+| 네비바 Tooltip 초기화 | `main_after_login.html`, `profile.html` | `fetch('/profile/info')` 후 `new bootstrap.Tooltip(profileNavLink)` |
+| 회원정보 수정 Collapse 연결 | `profile.html` | 버튼 `data-bs-target="#updateFormArea"` ↔ `div#updateFormArea.collapse` |
+| `validateAndUpdate()` 정규식 | `Profile.js` | 이메일·연락처 정규식 검사 후 `updateForm.submit()` |
+| 비밀번호 SHA-256 해시 | `Profile.js` | `hashPassword()` → `currentPassword` / `newPassword` hidden 저장 |
+| `setTimeout` 자동 로그아웃 | `Profile.js` | `success=password_changed` 감지 → `setTimeout(3500)` → `/logout?next=login` |
+| `/logout?next=login` 처리 | `AuthResource.java` | `@QueryParam("next")` → `/login` 리다이렉트 |
+| 세션 분기 (로그인/비로그인) | `AuthResource.java` | `GET /` → 세션 있으면 `main_after_login.html`, 없으면 `main_index.html` |
+| 신규 챔피언 카드 4개 | `main_after_login.html` | 앰베사/스몰더/나아피리/오로라 카드 + modal (iframe `../modals/`) |
+| `register.html` alert 블록 | `register.html` | `window.onload alert` 블록 완전 삭제 |
 
