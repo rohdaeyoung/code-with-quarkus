@@ -207,9 +207,7 @@ window.onload = function () {
 };
 ```
 
-# 6주차 과제
-
-1. **var / let / const 스코프 차이 실습 (test.js)**
+3. **var / let / const 스코프 차이**
 
 - `var`는 함수 스코프 → `if` 블록 밖에서도 접근 가능
 - `let` / `const`는 블록 스코프 → `{}` 밖에서 접근 시 ReferenceError 발생
@@ -230,13 +228,13 @@ y = 40;     // 재할당 가능 (재선언 불가)
 const z = 50; // 재할당 불가
 ```
 
-2. **호이스팅(Hoisting) 실습**
+4. **호이스팅(Hoisting)**
 
 - `var`는 선언 전 접근 시 `undefined` 출력 (선언만 끌어올림)
 - `let` / `const`는 TDZ(Temporal Dead Zone) 발생 → 선언 전 접근 시 ReferenceError
 - TDZ가 발생하면 그 이후 코드도 실행 중단됨
 
-3. **성능 측정 실습 (test2.js)**
+5. **성능 측정 실습 (test2.js)**
 
 - 1,000,000개 데이터로 일반 배열 vs 객체 배열 탐색·가공 성능 비교
 - `console.time()` / `console.timeEnd()` 활용한 성능 측정
@@ -763,5 +761,3 @@ function showToast(message, type = "success") {
  ⑤ 성공 시 Toast 알림 → 3.5초 후 /logout?next=login → 로그인 페이지 이동
 ```
 
-![alt text](image-30.png)
-![alt text](image-31.png)
