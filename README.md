@@ -84,13 +84,13 @@ You can run your application in dev mode that enables live coding using:
 
 3. **CSS 선택자 우선순위**
 
-  | 선택자     | 예시                      | 우선순위 |
-  | ---------- | ------------------------- | -------- |
-  | 요소       | `div`, `p`, `img`         | 낮음     |
-  | 클래스     | `.card`, `.accent-purple` | 중간     |
-  | ID         | `#championGrid`           | 높음     |
-  | 결합       | `.card:hover`             | 중간+    |
-  | !important | `color: white !important` | 최고     |
+| 선택자     | 예시                      | 우선순위 |
+| ---------- | ------------------------- | -------- |
+| 요소       | `div`, `p`, `img`         | 낮음     |
+| 클래스     | `.card`, `.accent-purple` | 중간     |
+| ID         | `#championGrid`           | 높음     |
+| 결합       | `.card:hover`             | 중간+    |
+| !important | `color: white !important` | 최고     |
 
 4. **HTML/CSS 심화 실습**
 
@@ -120,12 +120,12 @@ You can run your application in dev mode that enables live coding using:
 
 5. **HTML 테이블 태그**
 
-  | 태그                  | 역할                |
-  | --------------------- | ------------------- |
-  | `<table>`             | 표 전체             |
-  | `<thead>` / `<tbody>` | 헤더 / 본문 행 그룹 |
-  | `<tr>`                | 행(row)             |
-  | `<th>` / `<td>`       | 헤더 셀 / 데이터 셀 |
+| 태그                  | 역할                |
+| --------------------- | ------------------- |
+| `<table>`             | 표 전체             |
+| `<thead>` / `<tbody>` | 헤더 / 본문 행 그룹 |
+| `<tr>`                | 행(row)             |
+| `<th>` / `<td>`       | 헤더 셀 / 데이터 셀 |
 
 - F12 개발자 모드: Elements 탭에서 HTML/CSS 실시간 확인 및 수정 가능
 
@@ -223,13 +223,11 @@ window.onload = function () {
 - 검색창에 이름 입력 시 정상 검색 및 카드 출력
 - 카드 클릭 시 모달창으로 상세 정보 표시 (search.js `openChampionModal` → iframe 동적 생성 방식으로 수정)
 
-**앰베사 검색 결과**
-
 ![alt text](image-26.png)
-
-**스몰더 검색 결과**
-
 ![alt text](image-27.png)
+![alt text](image-5.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
 
 2. showMainScreen() 함수 구현 — 검색어가 없거나 공백일 경우 메인화면으로 복귀
 
@@ -238,16 +236,12 @@ window.onload = function () {
 
 ![alt text](image-25.png)
 
-3. modal창 구현
+3. 추가한 캐릭처 전체 modal창 구현
 
 ![alt text](image-8.png)
 ![alt text](image-9.png)
-
-4. 새로 추가했던 캐릭터들을 검색 후 상세 정보가 나오게 함. (수행 화면 3장)
-
-![alt text](image-5.png)
-![alt text](image-6.png)
-![alt text](image-7.png)
+![alt text](image-28.png)
+![alt text](image-29.png)
 
 <video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
 
@@ -338,6 +332,8 @@ quarkus.hibernate-orm.database.generation=update
 ![alt text](image-10.png)
 ![alt text](image-11.png)
 ![alt text](image-12.png)
+![alt text](image-30.png)
+![alt text](image-31.png)
 
 # 10주차 수업 내용 (로그인과 로그아웃)
 
