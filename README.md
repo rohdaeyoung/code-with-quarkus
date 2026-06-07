@@ -630,47 +630,12 @@ async function hashPassword(password) {
 - 2025 개인정보 유출 현황: 쿠팡(3,370만 건), SK텔레콤 등 전국민 정보 유출
 - 유출 경로: 내부(내부자), 외부(해킹) / 주요 원인: 피싱 메일, 악성코드
 - 중요 개인정보의 불법유통 확대 (단돈 3천 원에 거래)
-
-| 구분 | 설명 |
-| ---- | ---- |
-| 일반적 정보 | 주민등록번호, 이름, 주소, 전화번호 |
-| 통신 위치 정보 | 통화, IP주소, GPS 등 |
-| 사회적 정보 | 교육 정보, 근로 정보, 자격 정보 |
-| 정신적 정보 | 기호, 성향, 신념, 사상 |
-| 신체적 정보 | 신체정보, 의료, 건강정보 |
-| 재산적 정보 | 개인, 신용정보, 부동산, 주식 |
-
-- 최근 AI 모델 데이터 수집/생성 (AI 챗봇, 딥페이크, 보이스피싱) → 외부 전송 X, 로컬 최적화 대안
-- 프라이버시 보호 대안: 외부 전송 X, 로컬에서 부분적 최적화 등
+- 최근 AI 모델(챗봇, 딥페이크, 보이스피싱) → 프라이버시 보호 대안: 외부 전송 X, 로컬 최적화
 
 ## PART 2 : 프론트 수정 (Toast 알림)
 
-1. 브라우저 기본 알림(alert) → Bootstrap5 Toast로 교체
-
-- alert()은 화면을 완전히 차단하고 버튼 클릭이 필수이므로 실제 서비스에서는 미사용
-- Bootstrap5 Toast는 화면 차단 없이 자동으로 사라지는 비방해형 알림 (실제 서비스 표준)
-
-| 구분        | alert()        | Toast        |
-| ----------- | -------------- | ------------ |
-| 화면 차단   | ✅ 완전 차단   | ❌ 차단 없음 |
-| 사용자 조작 | 버튼 클릭 필수 | 자동 사라짐  |
-| 실제 서비스 | ❌ 거의 미사용 | ✅ 표준      |
-
-2. test.js 수정 → showToast() 함수 제공
-
-```js
-function showToast(message, type = "success") {
-  const toastEl = document.getElementById("liveToast");
-  const toastBody = document.getElementById("toastBody");
-  if (!toastEl || !toastBody) return;
-  toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
-  toastBody.textContent = message;
-  const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-  toast.show();
-}
-```
-
-- 모든 페이지의 `alert()` 제거 → `showToast()` 로 교체
+- 브라우저 기본 alert() → Bootstrap5 Toast로 교체 (화면 차단 없이 자동 사라짐)
+- `test.js`에 `showToast(message, type)` 함수 작성 후 모든 페이지 공유
 
 | 파일 | window.onload | onclick |
 | ---- | ------------- | ------- |
@@ -680,125 +645,95 @@ function showToast(message, type = "success") {
 | `login/register.html` | alert 제거 (toast 없음) | - |
 | `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
 
+![alt text](image-31.png)
+
 ## PART 3 : 네비바 사용자명 동적 표시 (Tooltip)
 
-- main_after_login.html 프로필 버튼: `fetch('/profile/info')` 로 사용자명 받아 Tooltip 표시
-- Profile.js: `/profile/info` 엔드포인트 사용, 수정 폼 기존 값 자동 채우기
-
-| 코드                       | 역할                                        |
-| -------------------------- | ------------------------------------------- |
-| data-bs-toggle="tooltip"   | Bootstrap에게 tooltip임을 선언              |
-| data-bs-placement="bottom" | 말풍선 방향 (top/bottom/left/right)         |
-| new bootstrap.Tooltip(el)  | JS로 tooltip 초기화 (동적 title이므로 필수) |
+- `main_after_login.html` 프로필 링크에 `data-bs-toggle="tooltip"` 추가
+- `fetch('/profile/info')` 로 사용자명 받아 `setAttribute('data-bs-title', '👋 ' + username)` 후 `new bootstrap.Tooltip()` 초기화
+- Tooltip은 동적 title 이므로 JS 초기화 필수
 
 ## PART 4 : 회원정보 수정
 
-- profile.html에 Bootstrap Collapse(접기/펼치기) 기반 회원정보 수정 폼 추가
+- `profile.html`에 Bootstrap Collapse 기반 수정 폼 추가 (📝 개인정보 수정 버튼 클릭 시 펼쳐짐)
 - 이메일·연락처 정규식 검사 후 `/profile/update` POST 전송
-- 수정 성공: `/profile?success=updated` → 성공 메시지 표시
-- 이메일 중복: `/profile?error=duplicate_email` → 오류 메시지 표시
+- `Profile.js` `validateAndUpdate()`: 이메일·연락처 정규식 검사 → 통과 시 폼 제출
+- 수정 성공 → `/profile?success=updated` → 성공 메시지 + 폼 자동 펼침
+- 이메일 중복 → `/profile?error=duplicate_email` → 오류 메시지
 
-```
-수정 완료 클릭 → validateAndUpdate() 실행
- ① 이메일 정규식 검사
- ② 연락처 정규식 검사 (010-XXXX-XXXX)
- ③ 모두 통과 → /profile/update POST 전송 → DB 업데이트
-```
+![alt text](image-30.png)
 
 ## PART 5 : 비밀번호 변경
 
-- profile.html에 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인)
-- 현재·새 비밀번호 SHA-256 해시 후 `/profile/password` POST 전송
-- 변경 성공: Toast 알림 → 3.5초 후 `/logout?next=login` → 로그인 페이지로 이동
+- `profile.html`에 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인 + hidden 필드)
+- `Profile.js` `validateAndChangePassword()` async 함수: 유효성 검사 → SHA-256 해시 → 서버 전송
+- 변경 성공: Toast 알림 → `setTimeout` 3500ms 후 `/logout?next=login` → 로그인 페이지 이동
 - 현재 PW 불일치: `/profile?error=wrong_password` → 오류 Toast + 메시지 표시
+- `setTimeout`: 지정 시간(ms) 후 함수 실행하는 비동기 처리 (블로킹 없음, 1000ms = 1초)
 
-```
-비밀번호 변경 클릭 → validateAndChangePassword() 실행
- ① 현재 비밀번호 빈 값 체크
- ② 새 비밀번호 정규식 검사 (8자+영문+숫자+특수문자)
- ③ 새 비밀번호 확인 일치 여부
- ④ SHA-256 해시 생성 → hidden 필드 저장 → 서버 전송
-```
-
-## setTimeout 비동기 처리 이론
-
-- `setTimeout(함수, 대기ms)`: 지정 시간(ms) 이후 함수 실행 (Web API → Event Loop → Task Queue)
-- 비동기 처리: 대기 중에도 다른 코드 실행 가능 (블로킹 없음)
-- 1000ms = 1초 / 3500ms = 3.5초 대기 후 실행
-- 취소 방법: `clearTimeout(id)`
-
-```js
-// 비밀번호 변경 성공 → Toast → 3.5초 후 로그인 페이지 이동
-if (success === 'password_changed') {
-    showToast('✅ 비밀번호가 변경 완료, 로그인 페이지로 이동합니다.', 'success');
-    setTimeout(function() {
-        window.location.href = '/logout?next=login';
-    }, 3500);
-}
-```
+![alt text](image-33.png)
+![alt text](image-32.png)
 
 ## AuthResource.java 추가 엔드포인트
 
-| 엔드포인트          | 메서드 | 역할                             |
-| ------------------- | ------ | -------------------------------- |
-| `/profile/info`     | GET    | 프로필 JSON 반환                 |
-| `/profile/update`   | POST   | 이메일·연락처 수정               |
-| `/profile/password` | POST   | 비밀번호 변경 (해시값 비교)      |
-| `/logout`           | GET    | 세션 삭제 (`?next=login` 지원)   |
+| 엔드포인트 | 메서드 | 역할 |
+| ---------- | ------ | ---- |
+| `/profile/info` | GET | 프로필 JSON 반환 |
+| `/profile/update` | POST | 이메일·연락처 수정 |
+| `/profile/password` | POST | 비밀번호 변경 (해시값 비교) |
+| `/logout` | GET | 세션 삭제 (`?next=login` 지원) |
 
 ![alt text](image-18.png)
 ![alt text](image-19.png)
 
 # 13주차 과제 - 회원관리 페이지 2
 
-1. **alert → Toast 교체** (test.js showToast 함수 활용)
+1. **alert → Toast 교체**
 
-| 파일 | window.onload 처리 | onclick 처리 |
-| ---- | ------------------ | ------------ |
-| `main_index.html` | showToast('메인 페이지 로딩 완료') | showToast('즐거운 플레이 되세요') |
-| `login/main_after_login.html` | showToast('로그인 성공!') | showToast('즐거운 플레이 되세요') |
-| `login/login.html` | alert 삭제 | - |
-| `login/register.html` | alert 삭제 (toast 없음) | - |
-| `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
-
-- `test.js` 수정: 기존 JS 실습 코드 → showToast(message, type) 함수로 교체
+- `test.js` 수정: 기존 JS 실습 코드 → `showToast(message, type)` 함수로 교체
 - 각 페이지 `</body>` 위에 Toast 컨테이너 HTML 추가
-- Toast type: `'success'`(초록) / `'danger'`(빨강) / `'warning'`(노랑)
+- 로그인 성공 Toast 추가: `main_after_login.html` window.onload 에 showToast('로그인 성공!') 삽입
+
+![alt text](image-31.png)
 
 2. **회원정보 수정 구현**
 
-- `profile.html`: Bootstrap Collapse 기반 수정 폼 추가 (이메일, 연락처 입력)
-- `Profile.js`: `validateAndUpdate()` 함수 추가 (정규식 검사 후 제출)
+- `profile.html`: Bootstrap Collapse 기반 수정 폼 추가 (이메일, 연락처)
+- `Profile.js`: `validateAndUpdate()` 함수 구현 (정규식 검사 후 폼 제출)
 - `AuthResource.java`: `/profile/update` POST 엔드포인트 추가
 
 ```
-수정 완료 클릭 → validateAndUpdate() 실행
- ① 이메일 형식 검사 (/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
- ② 연락처 형식 검사 (/^010-\d{4}-\d{4}$/)
- ③ 통과 시 /profile/update POST → DB 업데이트 → /profile?success=updated
+수정 완료 클릭 → validateAndUpdate()
+ ① 이메일 정규식 검사 (/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+ ② 연락처 정규식 검사 (/^010-\d{4}-\d{4}$/)
+ ③ 통과 → /profile/update POST → DB 업데이트
 ```
+
+![alt text](image-30.png)
 
 3. **비밀번호 변경 구현**
 
 - `profile.html`: 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인, hidden 필드)
-- `Profile.js`: `validateAndChangePassword()` async 함수 추가 (SHA-256 해시 후 전송)
+- `Profile.js`: `validateAndChangePassword()` async 함수 구현 (SHA-256 해시 후 전송)
 - `AuthResource.java`: `/profile/password` POST 엔드포인트 추가
-- `/logout` 엔드포인트 수정: `?next=login` 파라미터 지원 → 비밀번호 변경 후 로그인 페이지로 이동
+- `/logout` 수정: `?next=login` 파라미터 지원
 
 ```
-비밀번호 변경 클릭 → validateAndChangePassword() 실행
+비밀번호 변경 클릭 → validateAndChangePassword()
  ① 현재 비밀번호 빈 값 체크
  ② 새 비밀번호 정규식 검사 (8자+영문+숫자+특수문자)
- ③ 새 비밀번호 확인 일치 여부 체크
- ④ SHA-256 해시 생성 → hidden 필드 저장 → /profile/password POST 전송
- ⑤ 성공 시 Toast 알림 → 3.5초 후 /logout?next=login → 로그인 페이지 이동
+ ③ 새 비밀번호 확인 일치 체크
+ ④ SHA-256 해시 → hidden 필드 → /profile/password POST
+ ⑤ 성공 → Toast → 3.5초 후 /logout?next=login
 ```
+
+![alt text](image-33.png)
+![alt text](image-32.png)
 
 4. **마무리 Final Check**
 
 - 네비바 Disabled 항목 제거 (`main_index.html`, `main_after_login.html`)
-- 로그인 성공 Toast 추가: `main_after_login.html` window.onload showToast('로그인 성공!')
-- 전체 페이지 검색창 동작 확인 (JS 로드 순서, 상대경로 체크)
-- 네비게이션 바 링크 통일: 모든 하이퍼링크 확인, 불필요한 항목 제거
-- 자바 코드 주석처리 및 들여쓰기 정리
+- 전체 페이지 검색창 동작 및 JS 로드 순서 확인
+- 네비게이션 바 링크 통일, 불필요한 항목 제거
+- 코드 주석처리 및 들여쓰기 정리
 
