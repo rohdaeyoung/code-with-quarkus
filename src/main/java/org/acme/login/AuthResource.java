@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.nio.file.Paths;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.RestForm;
+import jakarta.ws.rs.QueryParam;
 
 
 
@@ -90,21 +91,11 @@ return Response.ok(html).build();
     
     @GET
     @Path("/logout")
-    public Response logout() {
-
-        System.out.println("=== 로그아웃 전 세션 ID : " + context.session().id());
-        System.out.println("=== 로그아웃 전 세션 ID : " + context.session().id());
-        System.out.println("=== 로그아웃 전 loginUser : " + context.session().get("loginUser"));
-
+    public Response logout(@QueryParam("next") String next) {
         context.session().destroy();
-
-        System.out.println("=== 로그아웃 후 세션 ID : " + context.session().id());
-        System.out.println("=== 로그아웃 후 세션 ID : " + context.session().id());
-        System.out.println("=== 로그아웃 후 loginUser : " + context.session().get("loginUser"));
-
-        return Response
-            .seeOther(URI.create("/"))
-            .build();
+        // ?next=login 이면 /login으로, 그 외에는 메인(/)으로 이동
+        String redirect = (next != null && next.equals("login")) ? "/login" : "/";
+        return Response.seeOther(URI.create(redirect)).build();
     }
 
     // AuthResource.java 아래 새로 추가
@@ -211,7 +202,7 @@ return Response.ok(html).build();
         return Response.seeOther(URI.create("/profile")).build();
     }
 
-    // 프로필 정보를 JSON으로 반환하는 API
+    // 프로필 정보를 JSON으로 반환 (/api/profile 기존 유지)
     @GET
     @Path("/api/profile")
     @Produces(MediaType.APPLICATION_JSON)
@@ -229,6 +220,74 @@ return Response.ok(html).build();
             user.profileImage != null ? user.profileImage : "default.png"
         );
         return Response.ok(json).build();
+    }
+
+    // 프로필 정보 JSON 반환 (Profile.js / main_after_login.html 전용)
+    @GET
+    @Path("/profile/info")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response profileInfo() {
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        User user = User.findByUsername(loginUser);
+        String json = String.format(
+            "{\"username\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"profileImage\":\"%s\"}",
+            user.username,
+            user.email != null ? user.email : "",
+            user.phone != null ? user.phone : "",
+            user.profileImage != null ? user.profileImage : "default.png"
+        );
+        return Response.ok(json).build();
+    }
+
+    // 개인정보 수정 엔드포인트
+    @POST
+    @Path("/profile/update")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response profileUpdate(
+        @FormParam("email") String email,
+        @FormParam("phone") String phone) {
+        // ① 세션 체크
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.seeOther(URI.create("/login")).build();
+        }
+        // ② 이메일 중복 체크 (본인 제외)
+        User found = User.findByEmail(email);
+        if (found != null && !found.username.equals(loginUser)) {
+            return Response.seeOther(URI.create("/profile?error=duplicate_email")).build();
+        }
+        // ③ DB 업데이트
+        User user = User.findByUsername(loginUser);
+        user.email = email;
+        user.phone = phone;
+        return Response.seeOther(URI.create("/profile?success=updated")).build();
+    }
+
+    // 비밀번호 변경 엔드포인트
+    @POST
+    @Path("/profile/password")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response profilePassword(
+        @FormParam("currentPassword") String currentPassword,
+        @FormParam("newPassword")     String newPassword) {
+        // ① 세션 체크
+        String loginUser = context.session().get("loginUser");
+        if (loginUser == null) {
+            return Response.seeOther(URI.create("/login")).build();
+        }
+        // ② 현재 비밀번호 확인 (해시값 비교)
+        User user = User.findByUsername(loginUser);
+        if (!user.password.equals(currentPassword)) {
+            return Response.seeOther(URI.create("/profile?error=wrong_password")).build();
+        }
+        // ③ 새 비밀번호로 DB 업데이트
+        user.password = newPassword;
+        return Response.seeOther(URI.create("/profile?success=password_changed")).build();
     }
 
 }

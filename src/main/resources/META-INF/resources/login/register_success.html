@@ -13,12 +13,11 @@
     <script src="../js/test.js"></script>
     <script src="../js/test2.js"></script>
     <script src="../js/toggle.js"></script>
-
-    <!-- <script>
+    <script>
       window.onload = function () {
-        alert("메인 페이지 로딩 완료");
+          showToast('회원가입이 완료되었습니다!');
       };
-    </script> -->
+    </script>
     <link rel="stylesheet" href="../css/main.css" />
   </head>
   <body>
@@ -141,9 +140,14 @@
       </div>
     </section>
 
-    <script src="js/search.js"></script>
-    <script src="js/toggle.js"></script>
-    <script src="js/input_sha256.js"></script>
-    <script src="js/input_check.js"></script>
+    <!-- 토스트 컨테이너 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastBody">메시지</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
   </body>
 </html>

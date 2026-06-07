@@ -588,9 +588,7 @@ async function hashPassword(password) {
 
 ![alt text](image-21.png)
 
-# 13주차 수업 내용 - 회원관리 페이지 2 (Toast, Tooltip)
-
-> 참고: 13주차는 토스트(Toast)와 툴팁(Tooltip)까지 진행함
+# 13주차 수업 내용 - 회원관리 페이지 2 (Toast, 회원정보 수정, 비밀번호 변경)
 
 ## PART 1 : 트렌드 - 2025 개인정보 유출
 
@@ -626,20 +624,60 @@ function showToast(message, type = "success") {
 }
 ```
 
-- main_index.html `</body>` 바로 위에 Toast 컨테이너 HTML 추가
-- 기존 `window.onload` 의 `alert("메인 페이지 로딩 완료")` → `showToast('메인 페이지 로딩 완료')` 로 교체
+- 모든 페이지의 `alert()` 제거 → `showToast()` 로 교체
+- `main_index.html`: window.onload, onclick 버튼 모두 Toast로 교체
+- `main_after_login.html`: window.onload alert 제거, onclick 버튼 Toast 교체, Toast 컨테이너 추가
+- `login.html`: window.onload alert 제거
+- `register_success.html`: window.onload showToast('회원가입이 완료되었습니다!') 추가
 
 ## PART 3 : 네비바 사용자명 동적 표시 (Tooltip)
 
-- main_after_login.html 프로필 버튼에 `data-bs-toggle="tooltip"` `data-bs-placement="bottom"` 추가
-- profile.js: `fetch('/profile/info')` 로 받은 사용자명을 `data-bs-title`에 설정 후 `new bootstrap.Tooltip()` 초기화
-- 프로필에 마우스를 올려 놓으면 툴팁(말풍선)으로 사용자명(👋 guest4) 표시
+- main_after_login.html 프로필 버튼: `fetch('/profile/info')` 로 사용자명 받아 Tooltip 표시
+- Profile.js: `/profile/info` 엔드포인트 사용, 수정 폼 기존 값 자동 채우기
 
 | 코드                       | 역할                                        |
 | -------------------------- | ------------------------------------------- |
 | data-bs-toggle="tooltip"   | Bootstrap에게 tooltip임을 선언              |
 | data-bs-placement="bottom" | 말풍선 방향 (top/bottom/left/right)         |
 | new bootstrap.Tooltip(el)  | JS로 tooltip 초기화 (동적 title이므로 필수) |
+
+## PART 4 : 회원정보 수정
+
+- profile.html에 Bootstrap Collapse(접기/펼치기) 기반 회원정보 수정 폼 추가
+- 이메일·연락처 정규식 검사 후 `/profile/update` POST 전송
+- 수정 성공: `/profile?success=updated` → 성공 메시지 표시
+- 이메일 중복: `/profile?error=duplicate_email` → 오류 메시지 표시
+
+```
+수정 완료 클릭 → validateAndUpdate() 실행
+ ① 이메일 정규식 검사
+ ② 연락처 정규식 검사 (010-XXXX-XXXX)
+ ③ 모두 통과 → /profile/update POST 전송 → DB 업데이트
+```
+
+## PART 5 : 비밀번호 변경
+
+- profile.html에 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인)
+- 현재·새 비밀번호 SHA-256 해시 후 `/profile/password` POST 전송
+- 변경 성공: Toast 알림 → 3.5초 후 `/logout?next=login` → 로그인 페이지로 이동
+- 현재 PW 불일치: `/profile?error=wrong_password` → 오류 Toast + 메시지 표시
+
+```
+비밀번호 변경 클릭 → validateAndChangePassword() 실행
+ ① 현재 비밀번호 빈 값 체크
+ ② 새 비밀번호 정규식 검사 (8자+영문+숫자+특수문자)
+ ③ 새 비밀번호 확인 일치 여부
+ ④ SHA-256 해시 생성 → hidden 필드 저장 → 서버 전송
+```
+
+## AuthResource.java 추가 엔드포인트
+
+| 엔드포인트          | 메서드 | 역할                             |
+| ------------------- | ------ | -------------------------------- |
+| `/profile/info`     | GET    | 프로필 JSON 반환                 |
+| `/profile/update`   | POST   | 이메일·연락처 수정               |
+| `/profile/password` | POST   | 비밀번호 변경 (해시값 비교)      |
+| `/logout`           | GET    | 세션 삭제 (`?next=login` 지원)   |
 
 ![alt text](image-18.png)
 ![alt text](image-19.png)
