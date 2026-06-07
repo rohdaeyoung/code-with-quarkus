@@ -121,9 +121,6 @@ body.light-mode .card-text { color: #555; }
           <li><a class="dropdown-item" href="https://www.leagueoflegends.com/de-de/" target="_blank">외부웹</a></li>
     </ul>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-      </li>
     </ul>
     <form class="d-flex" id="searchForm">
         <input class="form-control me-2" type="search" placeholder="챔피언, 뉴스 검색..." aria-label="Search" id="searchInput">
@@ -608,6 +605,13 @@ body.light-mode .card-text { color: #555; }
 
      <script src="../js/search.js"></script>
      <script src="../js/toggle.js"></script>
+
+     <!-- 로그인 성공 Toast -->
+     <script>
+     window.addEventListener('load', function() {
+         showToast('로그인 성공!', 'success');
+     });
+     </script>
 
      <!-- 프로필 툴팁: 마우스 올리면 아이디 표시 -->
      <script>

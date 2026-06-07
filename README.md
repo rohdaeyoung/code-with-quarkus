@@ -630,7 +630,18 @@ async function hashPassword(password) {
 - 2025 개인정보 유출 현황: 쿠팡(3,370만 건), SK텔레콤 등 전국민 정보 유출
 - 유출 경로: 내부(내부자), 외부(해킹) / 주요 원인: 피싱 메일, 악성코드
 - 중요 개인정보의 불법유통 확대 (단돈 3천 원에 거래)
+
+| 구분 | 설명 |
+| ---- | ---- |
+| 일반적 정보 | 주민등록번호, 이름, 주소, 전화번호 |
+| 통신 위치 정보 | 통화, IP주소, GPS 등 |
+| 사회적 정보 | 교육 정보, 근로 정보, 자격 정보 |
+| 정신적 정보 | 기호, 성향, 신념, 사상 |
+| 신체적 정보 | 신체정보, 의료, 건강정보 |
+| 재산적 정보 | 개인, 신용정보, 부동산, 주식 |
+
 - 최근 AI 모델 데이터 수집/생성 (AI 챗봇, 딥페이크, 보이스피싱) → 외부 전송 X, 로컬 최적화 대안
+- 프라이버시 보호 대안: 외부 전송 X, 로컬에서 부분적 최적화 등
 
 ## PART 2 : 프론트 수정 (Toast 알림)
 
@@ -660,10 +671,14 @@ function showToast(message, type = "success") {
 ```
 
 - 모든 페이지의 `alert()` 제거 → `showToast()` 로 교체
-- `main_index.html`: window.onload, onclick 버튼 모두 Toast로 교체
-- `main_after_login.html`: window.onload alert 제거, onclick 버튼 Toast 교체, Toast 컨테이너 추가
-- `login.html`: window.onload alert 제거
-- `register_success.html`: window.onload showToast('회원가입이 완료되었습니다!') 추가
+
+| 파일 | window.onload | onclick |
+| ---- | ------------- | ------- |
+| `main_index.html` | showToast('메인 페이지 로딩 완료') | showToast('즐거운 플레이 되세요') |
+| `login/main_after_login.html` | showToast('로그인 성공!') | showToast('즐거운 플레이 되세요') |
+| `login/login.html` | alert 제거 | - |
+| `login/register.html` | alert 제거 (toast 없음) | - |
+| `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
 
 ## PART 3 : 네비바 사용자명 동적 표시 (Tooltip)
 
@@ -705,6 +720,23 @@ function showToast(message, type = "success") {
  ④ SHA-256 해시 생성 → hidden 필드 저장 → 서버 전송
 ```
 
+## setTimeout 비동기 처리 이론
+
+- `setTimeout(함수, 대기ms)`: 지정 시간(ms) 이후 함수 실행 (Web API → Event Loop → Task Queue)
+- 비동기 처리: 대기 중에도 다른 코드 실행 가능 (블로킹 없음)
+- 1000ms = 1초 / 3500ms = 3.5초 대기 후 실행
+- 취소 방법: `clearTimeout(id)`
+
+```js
+// 비밀번호 변경 성공 → Toast → 3.5초 후 로그인 페이지 이동
+if (success === 'password_changed') {
+    showToast('✅ 비밀번호가 변경 완료, 로그인 페이지로 이동합니다.', 'success');
+    setTimeout(function() {
+        window.location.href = '/logout?next=login';
+    }, 3500);
+}
+```
+
 ## AuthResource.java 추가 엔드포인트
 
 | 엔드포인트          | 메서드 | 역할                             |
@@ -724,8 +756,9 @@ function showToast(message, type = "success") {
 | 파일 | window.onload 처리 | onclick 처리 |
 | ---- | ------------------ | ------------ |
 | `main_index.html` | showToast('메인 페이지 로딩 완료') | showToast('즐거운 플레이 되세요') |
-| `login/main_after_login.html` | alert 삭제 (toast 없음) | showToast('즐거운 플레이 되세요') |
+| `login/main_after_login.html` | showToast('로그인 성공!') | showToast('즐거운 플레이 되세요') |
 | `login/login.html` | alert 삭제 | - |
+| `login/register.html` | alert 삭제 (toast 없음) | - |
 | `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
 
 - `test.js` 수정: 기존 JS 실습 코드 → showToast(message, type) 함수로 교체
@@ -760,4 +793,12 @@ function showToast(message, type = "success") {
  ④ SHA-256 해시 생성 → hidden 필드 저장 → /profile/password POST 전송
  ⑤ 성공 시 Toast 알림 → 3.5초 후 /logout?next=login → 로그인 페이지 이동
 ```
+
+4. **마무리 Final Check**
+
+- 네비바 Disabled 항목 제거 (`main_index.html`, `main_after_login.html`)
+- 로그인 성공 Toast 추가: `main_after_login.html` window.onload showToast('로그인 성공!')
+- 전체 페이지 검색창 동작 확인 (JS 로드 순서, 상대경로 체크)
+- 네비게이션 바 링크 통일: 모든 하이퍼링크 확인, 불필요한 항목 제거
+- 자바 코드 주석처리 및 들여쓰기 정리
 
