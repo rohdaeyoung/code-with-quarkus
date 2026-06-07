@@ -332,8 +332,8 @@ quarkus.hibernate-orm.database.generation=update
 ![alt text](image-10.png)
 ![alt text](image-11.png)
 ![alt text](image-12.png)
-![alt text](image-30.png)
-![alt text](image-31.png)
+![alt text](image-32.png)
+![alt text](image-33.png)
 
 # 10주차 수업 내용 (로그인과 로그아웃)
 
