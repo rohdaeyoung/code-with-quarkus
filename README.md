@@ -645,8 +645,6 @@ async function hashPassword(password) {
 | `login/register.html` | alert 제거 (toast 없음) | - |
 | `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
 
-![alt text](image-31.png)
-
 ## PART 3 : 네비바 사용자명 동적 표시 (Tooltip)
 
 - `main_after_login.html` 프로필 링크에 `data-bs-toggle="tooltip"` 추가
@@ -661,8 +659,6 @@ async function hashPassword(password) {
 - 수정 성공 → `/profile?success=updated` → 성공 메시지 + 폼 자동 펼침
 - 이메일 중복 → `/profile?error=duplicate_email` → 오류 메시지
 
-![alt text](image-30.png)
-
 ## PART 5 : 비밀번호 변경
 
 - `profile.html`에 비밀번호 변경 폼 추가 (현재PW / 새PW / 새PW 확인 + hidden 필드)
@@ -670,9 +666,6 @@ async function hashPassword(password) {
 - 변경 성공: Toast 알림 → `setTimeout` 3500ms 후 `/logout?next=login` → 로그인 페이지 이동
 - 현재 PW 불일치: `/profile?error=wrong_password` → 오류 Toast + 메시지 표시
 - `setTimeout`: 지정 시간(ms) 후 함수 실행하는 비동기 처리 (블로킹 없음, 1000ms = 1초)
-
-![alt text](image-33.png)
-![alt text](image-32.png)
 
 ## AuthResource.java 추가 엔드포인트
 
