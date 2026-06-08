@@ -693,7 +693,7 @@ async function hashPassword(password) {
 - `AuthResource.java`: `POST /profile/update` — DB 업데이트 후 `/profile?success=updated` 리다이렉트
 - 성공 시 폼 자동 펼침(`bootstrap.Collapse show:true`) + 성공 메시지 표시
 
-  ![alt text](<회원 정보 수정.png>)
+![alt text](image-32.png)
 
 3. **비밀번호 변경 구현**
 
@@ -703,7 +703,7 @@ async function hashPassword(password) {
 - `GET /logout`: `?next=login` 파라미터 지원 → `/login` 리다이렉트
 - 성공 → Toast 표시 → `setTimeout(3500ms)` → `/logout?next=login`
 
-  ![alt text](<비밀번호 변경.png>)
+![alt text](image-33.png)
 
 ---
 
