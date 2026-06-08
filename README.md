@@ -216,15 +216,15 @@ window.onload = function () {
 ```js
 // 스코프 차이
 if (true) {
-  var a = "var 변수";   // 블록 밖에서 접근 가능
-  let b = "let 변수";   // 블록 밖 접근 시 ReferenceError
+  var a = "var 변수"; // 블록 밖에서 접근 가능
+  let b = "let 변수"; // 블록 밖 접근 시 ReferenceError
 }
 
 // 재선언 & 재할당
 var x = 10;
 var x = 20; // 가능
 let y = 30;
-y = 40;     // 재할당 가능 (재선언 불가)
+y = 40; // 재할당 가능 (재선언 불가)
 const z = 50; // 재할당 불가
 ```
 
@@ -269,16 +269,12 @@ const z = 50; // 재할당 불가
 - performSearch()에서 검색어(q)가 없으면 showMainScreen() 호출
 - 메인화면 복귀 시 기존 section이 다시 보이도록 d-none 제거 및 searchResults 숨김
 
-![alt text](image-25.png)
-
 3. 추가한 캐릭처 전체 modal창 구현
 
 ![alt text](image-8.png)
 ![alt text](image-9.png)
 ![alt text](image-28.png)
 ![alt text](image-29.png)
-
-<video controls src="20260415-0954-57.4169456.mp4" title="Title"></video>
 
 # 9주차 수업 내용 (JS 기능 추가 및 MySQL 연동)
 
@@ -367,8 +363,8 @@ quarkus.hibernate-orm.database.generation=update
 ![alt text](image-10.png)
 ![alt text](image-11.png)
 ![alt text](image-12.png)
-![alt text](image-32.png)
-![alt text](image-33.png)
+![alt text](image-30.png)
+![alt text](image-31.png)
 
 # 10주차 수업 내용 (로그인과 로그아웃)
 
@@ -637,13 +633,13 @@ async function hashPassword(password) {
 - 브라우저 기본 alert() → Bootstrap5 Toast로 교체 (화면 차단 없이 자동 사라짐)
 - `test.js`에 `showToast(message, type)` 함수 작성 후 모든 페이지 공유
 
-| 파일 | window.onload | onclick |
-| ---- | ------------- | ------- |
-| `main_index.html` | showToast('메인 페이지 로딩 완료') | showToast('즐거운 플레이 되세요') |
-| `login/main_after_login.html` | showToast('로그인 성공!') | showToast('즐거운 플레이 되세요') |
-| `login/login.html` | alert 제거 | - |
-| `login/register.html` | alert 제거 (toast 없음) | - |
-| `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | - |
+| 파일                          | window.onload                           | onclick                           |
+| ----------------------------- | --------------------------------------- | --------------------------------- |
+| `main_index.html`             | showToast('메인 페이지 로딩 완료')      | showToast('즐거운 플레이 되세요') |
+| `login/main_after_login.html` | showToast('로그인 성공!')               | showToast('즐거운 플레이 되세요') |
+| `login/login.html`            | alert 제거                              | -                                 |
+| `login/register.html`         | alert 제거 (toast 없음)                 | -                                 |
+| `login/register_success.html` | showToast('회원가입이 완료되었습니다!') | -                                 |
 
 ## PART 3 : 네비바 사용자명 동적 표시 (Tooltip)
 
@@ -669,25 +665,25 @@ async function hashPassword(password) {
 
 ## AuthResource.java 추가 엔드포인트
 
-| 엔드포인트 | 메서드 | 역할 |
-| ---------- | ------ | ---- |
-| `/profile/info` | GET | 프로필 JSON 반환 |
-| `/profile/update` | POST | 이메일·연락처 수정 |
-| `/profile/password` | POST | 비밀번호 변경 (해시값 비교) |
-| `/logout` | GET | 세션 삭제 (`?next=login` 지원) |
+| 엔드포인트          | 메서드 | 역할                           |
+| ------------------- | ------ | ------------------------------ |
+| `/profile/info`     | GET    | 프로필 JSON 반환               |
+| `/profile/update`   | POST   | 이메일·연락처 수정             |
+| `/profile/password` | POST   | 비밀번호 변경 (해시값 비교)    |
+| `/logout`           | GET    | 세션 삭제 (`?next=login` 지원) |
 
 ![alt text](image-18.png)
 ![alt text](image-19.png)
 
-# 13주차 과제 - 회원관리 페이지 2
+# 13주차 과제 - 회원관리 페이지 2 (6/7 유튜브 내용~과제까지)
 
 1. **alert → Toast 교체**
 
 - `js/test.js`: `showToast(message, type)` 함수 작성 (type: success/danger/warning)
 - `main_index.html`, `main_after_login.html`, `profile.html` 각 `</body>` 위에 Toast 컨테이너 HTML 추가
 - `main_after_login.html`: `window.addEventListener('load')` → `showToast('로그인 성공!', 'success')` 삽입
-
-![alt text](image-31.png)
+  ![alt text](<Toast-login sucess.png>)
+  ![alt text](<Toast-PW change.png>)
 
 2. **회원정보 수정 구현**
 
@@ -695,8 +691,7 @@ async function hashPassword(password) {
 - `Profile.js`: `validateAndUpdate()` — 정규식 검사 통과 시 `#updateForm.submit()`
 - `AuthResource.java`: `POST /profile/update` — DB 업데이트 후 `/profile?success=updated` 리다이렉트
 - 성공 시 폼 자동 펼침(`bootstrap.Collapse show:true`) + 성공 메시지 표시
-
-![alt text](image-30.png)
+  ![alt text](<회원 정보 수정.png>)
 
 3. **비밀번호 변경 구현**
 
@@ -705,9 +700,7 @@ async function hashPassword(password) {
 - `AuthResource.java`: `POST /profile/password` — 해시값 비교 후 성공 시 `/profile?success=password_changed`
 - `GET /logout`: `?next=login` 파라미터 지원 → `/login` 리다이렉트
 - 성공 → Toast 표시 → `setTimeout(3500ms)` → `/logout?next=login`
-
-![alt text](image-33.png)
-![alt text](image-32.png)
+  ![alt text](<비밀번호 변경.png>)
 
 ---
 
@@ -715,20 +708,19 @@ async function hashPassword(password) {
 
 코드와 HTML 연결까지 직접 검토한 결과:
 
-| 항목 | 파일 | 확인 결과 |
-|------|------|-----------|
-| 네비바 Disabled 항목 제거 | `main_index.html`, `main_after_login.html` | disabled 항목 없음 |
-| 검색창 동작 | `main_index.html`, `main_after_login.html` | `#searchForm` + `search.js` 로드 연결 |
-| Toast 컨테이너 | `main_index.html`, `main_after_login.html`, `profile.html` | 모든 페이지 `#liveToast` 존재 |
-| `test.js` JS 로드 순서 | `main_index.html`, `main_after_login.html` | `<head>`에서 `bootstrap.bundle.min.js` → `test.js` 순서 로드 |
-| 로그인 성공 Toast | `main_after_login.html` | `window.addEventListener('load')` → `showToast('로그인 성공!')` |
-| 네비바 Tooltip 초기화 | `main_after_login.html`, `profile.html` | `fetch('/profile/info')` 후 `new bootstrap.Tooltip(profileNavLink)` |
-| 회원정보 수정 Collapse 연결 | `profile.html` | 버튼 `data-bs-target="#updateFormArea"` ↔ `div#updateFormArea.collapse` |
-| `validateAndUpdate()` 정규식 | `Profile.js` | 이메일·연락처 정규식 검사 후 `updateForm.submit()` |
-| 비밀번호 SHA-256 해시 | `Profile.js` | `hashPassword()` → `currentPassword` / `newPassword` hidden 저장 |
-| `setTimeout` 자동 로그아웃 | `Profile.js` | `success=password_changed` 감지 → `setTimeout(3500)` → `/logout?next=login` |
-| `/logout?next=login` 처리 | `AuthResource.java` | `@QueryParam("next")` → `/login` 리다이렉트 |
-| 세션 분기 (로그인/비로그인) | `AuthResource.java` | `GET /` → 세션 있으면 `main_after_login.html`, 없으면 `main_index.html` |
-| 신규 챔피언 카드 4개 | `main_after_login.html` | 앰베사/스몰더/나아피리/오로라 카드 + modal (iframe `../modals/`) |
-| `register.html` alert 블록 | `register.html` | `window.onload alert` 블록 완전 삭제 |
-
+| 항목                         | 파일                                                       | 확인 결과                                                                   |
+| ---------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 네비바 Disabled 항목 제거    | `main_index.html`, `main_after_login.html`                 | disabled 항목 없음                                                          |
+| 검색창 동작                  | `main_index.html`, `main_after_login.html`                 | `#searchForm` + `search.js` 로드 연결                                       |
+| Toast 컨테이너               | `main_index.html`, `main_after_login.html`, `profile.html` | 모든 페이지 `#liveToast` 존재                                               |
+| `test.js` JS 로드 순서       | `main_index.html`, `main_after_login.html`                 | `<head>`에서 `bootstrap.bundle.min.js` → `test.js` 순서 로드                |
+| 로그인 성공 Toast            | `main_after_login.html`                                    | `window.addEventListener('load')` → `showToast('로그인 성공!')`             |
+| 네비바 Tooltip 초기화        | `main_after_login.html`, `profile.html`                    | `fetch('/profile/info')` 후 `new bootstrap.Tooltip(profileNavLink)`         |
+| 회원정보 수정 Collapse 연결  | `profile.html`                                             | 버튼 `data-bs-target="#updateFormArea"` ↔ `div#updateFormArea.collapse`     |
+| `validateAndUpdate()` 정규식 | `Profile.js`                                               | 이메일·연락처 정규식 검사 후 `updateForm.submit()`                          |
+| 비밀번호 SHA-256 해시        | `Profile.js`                                               | `hashPassword()` → `currentPassword` / `newPassword` hidden 저장            |
+| `setTimeout` 자동 로그아웃   | `Profile.js`                                               | `success=password_changed` 감지 → `setTimeout(3500)` → `/logout?next=login` |
+| `/logout?next=login` 처리    | `AuthResource.java`                                        | `@QueryParam("next")` → `/login` 리다이렉트                                 |
+| 세션 분기 (로그인/비로그인)  | `AuthResource.java`                                        | `GET /` → 세션 있으면 `main_after_login.html`, 없으면 `main_index.html`     |
+| 신규 챔피언 카드 4개         | `main_after_login.html`                                    | 앰베사/스몰더/나아피리/오로라 카드 + modal (iframe `../modals/`)            |
+| `register.html` alert 블록   | `register.html`                                            | `window.onload alert` 블록 완전 삭제                                        |
