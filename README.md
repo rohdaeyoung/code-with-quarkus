@@ -682,6 +682,7 @@ async function hashPassword(password) {
 - `js/test.js`: `showToast(message, type)` 함수 작성 (type: success/danger/warning)
 - `main_index.html`, `main_after_login.html`, `profile.html` 각 `</body>` 위에 Toast 컨테이너 HTML 추가
 - `main_after_login.html`: `window.addEventListener('load')` → `showToast('로그인 성공!', 'success')` 삽입
+
   ![alt text](<Toast-login sucess.png>)
   ![alt text](<Toast-PW change.png>)
 
@@ -691,6 +692,7 @@ async function hashPassword(password) {
 - `Profile.js`: `validateAndUpdate()` — 정규식 검사 통과 시 `#updateForm.submit()`
 - `AuthResource.java`: `POST /profile/update` — DB 업데이트 후 `/profile?success=updated` 리다이렉트
 - 성공 시 폼 자동 펼침(`bootstrap.Collapse show:true`) + 성공 메시지 표시
+
   ![alt text](<회원 정보 수정.png>)
 
 3. **비밀번호 변경 구현**
@@ -700,6 +702,7 @@ async function hashPassword(password) {
 - `AuthResource.java`: `POST /profile/password` — 해시값 비교 후 성공 시 `/profile?success=password_changed`
 - `GET /logout`: `?next=login` 파라미터 지원 → `/login` 리다이렉트
 - 성공 → Toast 표시 → `setTimeout(3500ms)` → `/logout?next=login`
+
   ![alt text](<비밀번호 변경.png>)
 
 ---
